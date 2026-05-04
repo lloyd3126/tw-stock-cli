@@ -11,7 +11,9 @@ from tw_stock_cli import cli
 from tw_stock_cli.registry import get_dataset
 
 
-def run_cli(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str], *args: str):
+def run_cli(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str], *args: str
+):
     monkeypatch.setattr(sys, "argv", ["tw-stock", *args])
     cli.main()
     return capsys.readouterr()
@@ -21,7 +23,9 @@ def test_list_datasets_json_outputs_catalog_metadata(
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
 ) -> None:
-    captured = run_cli(monkeypatch, capsys, "list-datasets", "--group", "twse", "--json")
+    captured = run_cli(
+        monkeypatch, capsys, "list-datasets", "--group", "twse", "--json"
+    )
     payload = json.loads(captured.out)
 
     assert payload

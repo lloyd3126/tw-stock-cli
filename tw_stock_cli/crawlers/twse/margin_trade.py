@@ -8,7 +8,7 @@ from tw_stock_cli.crawlers.twse.common import get_json
 
 URL = "http://www.twse.com.tw/exchangeReport/MI_MARGN?response=json&date={date}&selectType=ALL"
 REFERER = "http://www.twse.com.tw/zh/page/trading/exchange/MI_MARGN.html"
-COLNAMES = [
+OUTPUT_COLUMNS = [
     "股票代號",
     "股票名稱",
     "融資_買進",
@@ -41,7 +41,7 @@ def crawler(date: str) -> pd.DataFrame:
 
     if not rows:
         return pd.DataFrame()
-    return pd.DataFrame(rows, columns=COLNAMES)
+    return pd.DataFrame(rows, columns=OUTPUT_COLUMNS)
 
 
 if __name__ == "__main__":

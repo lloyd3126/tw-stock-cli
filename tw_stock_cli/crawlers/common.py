@@ -95,6 +95,35 @@ def post(
     return response
 
 
+def select_and_rename_columns(
+    frame: pd.DataFrame,
+    source_columns: Sequence[str],
+    output_columns: Sequence[str],
+) -> pd.DataFrame:
+    """Select source columns and rename them to the crawler output contract."""
+    if len(source_columns) != len(output_columns):
+        raise ValueError("source_columns and output_columns must have the same length")
+    result = frame[list(source_columns)].copy()
+    result.columns = list(output_columns)
+    return result
+
+
+def flatten_column_names(columns: Sequence[Any]) -> list[str]:
+    """Flatten pandas MultiIndex columns into stable string names."""
+    names = []
+    for column in columns:
+        if isinstance(column, tuple):
+            parts = [
+                str(part).strip()
+                for part in column
+                if not str(part).startswith("Unnamed")
+            ]
+            names.append("_".join(parts).strip("_"))
+        else:
+            names.append(str(column).strip())
+    return names
+
+
 def table_dataframe(
     payload: dict[str, Any],
     table_index: int = 0,

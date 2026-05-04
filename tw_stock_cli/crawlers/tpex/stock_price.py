@@ -7,13 +7,15 @@ import pandas as pd
 import requests
 
 from tw_stock_cli.crawlers.common import roc_date
+from tw_stock_cli.crawlers.common import select_and_rename_columns
 from tw_stock_cli.crawlers.common import table_dataframe
 from tw_stock_cli.crawlers.tpex.common import headers
 
 URL = "https://www.tpex.org.tw/web/stock/aftertrading/otc_quotes_no1430/stk_wn1430_result.php?l=zh-tw&d={}&se=AL&_={}"
 REFERER = "https://www.tpex.org.tw/web/stock/aftertrading/otc_quotes_no1430/stk_wn1430.php?l=zh-tw"
 
-COLNAMES = [
+SOURCE_COLUMNS = ["代號", "名稱", "收盤 ", "開盤 ", "最高 ", "最低"]
+OUTPUT_COLUMNS = [
     "stock_id",
     "stock_name",
     "close",
@@ -21,7 +23,6 @@ COLNAMES = [
     "max",
     "min",
 ]
-SOURCE_COLUMNS = ["代號", "名稱", "收盤 ", "開盤 ", "最高 ", "最低"]
 
 
 def crawler(parameters: dict[str, Any]) -> pd.DataFrame:
@@ -36,8 +37,7 @@ def crawler(parameters: dict[str, Any]) -> pd.DataFrame:
     data = table_dataframe(resp.json())
     if data.empty:
         return pd.DataFrame()
-    data = data[SOURCE_COLUMNS].copy()
-    data.columns = COLNAMES
+    data = select_and_rename_columns(data, SOURCE_COLUMNS, OUTPUT_COLUMNS)
     data["date"] = parameters.get("crawler_date", "")
     return data
 

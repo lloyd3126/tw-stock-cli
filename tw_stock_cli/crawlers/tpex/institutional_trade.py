@@ -10,7 +10,7 @@ URL = "https://www.tpex.org.tw/web/stock/3insti/daily_trade/3itrade_hedge_result
 REFERER = (
     "https://www.tpex.org.tw/web/stock/3insti/daily_trade/3itrade_hedge.php?l=zh-tw"
 )
-COLNAMES = [
+OUTPUT_COLUMNS = [
     "代號",
     "名稱",
     "外資及陸資(不含外資自營商)_買進股數",
@@ -41,7 +41,7 @@ COLNAMES = [
 def crawler(date: str) -> pd.DataFrame:
     if date < "2018-01-15":
         return pd.DataFrame()
-    data = table_dataframe(get_json(URL, date, REFERER), columns=COLNAMES)
+    data = table_dataframe(get_json(URL, date, REFERER), columns=OUTPUT_COLUMNS)
     if data.empty:
         return pd.DataFrame()
     return data

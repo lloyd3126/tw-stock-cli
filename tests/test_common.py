@@ -5,8 +5,10 @@ import pandas as pd
 from tw_stock_cli.crawlers.common import HTML_ACCEPT
 from tw_stock_cli.crawlers.common import JSON_ACCEPT
 from tw_stock_cli.crawlers.common import compact_date
+from tw_stock_cli.crawlers.common import flatten_column_names
 from tw_stock_cli.crawlers.common import request_headers
 from tw_stock_cli.crawlers.common import roc_date
+from tw_stock_cli.crawlers.common import select_and_rename_columns
 from tw_stock_cli.crawlers.common import table_dataframe
 from tw_stock_cli.crawlers.common import table_dataframe_by_field
 
@@ -64,6 +66,52 @@ def test_table_dataframe_reads_modern_tables_shape() -> None:
     assert frame.to_dict("records") == [
         {"stock_id": "2330", "close": "780"},
         {"stock_id": "2317", "close": "155"},
+    ]
+
+
+def test_select_and_rename_columns_defines_output_contract() -> None:
+    frame = pd.DataFrame(
+        [
+            {"證券代號": "2330", "證券名稱": "台積電", "收盤價": "780"},
+        ]
+    )
+
+    result = select_and_rename_columns(
+        frame,
+        source_columns=["證券代號", "收盤價"],
+        output_columns=["stock_id", "close"],
+    )
+
+    assert list(result.columns) == ["stock_id", "close"]
+    assert result.iloc[0].to_dict() == {"stock_id": "2330", "close": "780"}
+
+
+def test_select_and_rename_columns_rejects_mismatched_column_contracts() -> None:
+    frame = pd.DataFrame([{"證券代號": "2330"}])
+
+    try:
+        select_and_rename_columns(
+            frame,
+            source_columns=["證券代號"],
+            output_columns=["stock_id", "stock_name"],
+        )
+    except ValueError as exc:
+        assert str(exc) == "source_columns and output_columns must have the same length"
+    else:
+        raise AssertionError("expected ValueError")
+
+
+def test_flatten_column_names_normalizes_multiindex_columns() -> None:
+    columns = [
+        ("交易口數與契約金額", "多方", "口數"),
+        ("Unnamed: 1_level_0", "商品 名稱"),
+        "身份別",
+    ]
+
+    assert flatten_column_names(columns) == [
+        "交易口數與契約金額_多方_口數",
+        "商品 名稱",
+        "身份別",
     ]
 
 

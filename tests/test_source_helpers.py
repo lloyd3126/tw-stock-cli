@@ -48,7 +48,9 @@ def test_taifex_market_form_data_uses_slash_dates() -> None:
 
 
 def test_taifex_market_download_headers_include_form_context() -> None:
-    headers = market_download_headers("https://www.taifex.com.tw/cht/3/futDailyMarketReport")
+    headers = market_download_headers(
+        "https://www.taifex.com.tw/cht/3/futDailyMarketReport"
+    )
 
     assert headers["Origin"] == "https://www.taifex.com.tw"
     assert headers["Referer"] == "https://www.taifex.com.tw/cht/3/futDailyMarketReport"

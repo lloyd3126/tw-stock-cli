@@ -11,7 +11,7 @@ from tw_stock_cli.crawlers.tpex.common import headers
 
 URL = "https://www.tpex.org.tw/web/stock/margin_trading/margin_balance/margin_bal_result.php?l=zh-tw&o=json&d={date}"
 REFERER = "https://www.tpex.org.tw/web/stock/margin_trading/margin_balance/margin_bal.php?l=zh-tw"
-COLNAMES = [
+OUTPUT_COLUMNS = [
     "代號",
     "名稱",
     "融資_前資餘額(張)",
@@ -42,7 +42,7 @@ def crawler(date: str) -> pd.DataFrame:
         response = requests.get(
             url=URL.format(date=roc_date(date)), headers=headers(REFERER)
         )
-        data = table_dataframe(response.json(), columns=COLNAMES)
+        data = table_dataframe(response.json(), columns=OUTPUT_COLUMNS)
     except Exception as e:
         logger.error(e)
         return pd.DataFrame()

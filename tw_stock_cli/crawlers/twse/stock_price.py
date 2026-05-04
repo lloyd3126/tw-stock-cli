@@ -7,6 +7,7 @@ import pandas as pd
 import requests
 
 from tw_stock_cli.crawlers.common import compact_date
+from tw_stock_cli.crawlers.common import select_and_rename_columns
 from tw_stock_cli.crawlers.common import table_dataframe_by_field
 from tw_stock_cli.crawlers.twse.common import headers
 
@@ -29,8 +30,7 @@ def crawler(parameters: dict[str, Any]) -> pd.DataFrame:
     data = table_dataframe_by_field(resp.json(), "證券代號")
     if data.empty:
         return pd.DataFrame()
-    data = data[SOURCE_COLUMNS].copy()
-    data.columns = OUTPUT_COLUMNS
+    data = select_and_rename_columns(data, SOURCE_COLUMNS, OUTPUT_COLUMNS)
     data["date"] = crawler_date
     return data
 

@@ -7,6 +7,7 @@ import requests
 import pandas as pd
 from lxml import etree
 
+from tw_stock_cli.crawlers.common import flatten_column_names
 from tw_stock_cli.crawlers.common import HTML_ACCEPT
 from tw_stock_cli.crawlers.common import request_headers
 from tw_stock_cli.crawlers.taifex.common import TAIFEX_ORIGIN
@@ -28,14 +29,7 @@ def crawler_future(resp_text: str) -> pd.DataFrame:
     if not tables:
         return pd.DataFrame()
     df = tables[0]
-    df.columns = [
-        "_".join(
-            str(part).strip() for part in col if not str(part).startswith("Unnamed")
-        ).strip("_")
-        if isinstance(col, tuple)
-        else str(col).strip()
-        for col in df.columns
-    ]
+    df.columns = flatten_column_names(df.columns)
     return df
 
 

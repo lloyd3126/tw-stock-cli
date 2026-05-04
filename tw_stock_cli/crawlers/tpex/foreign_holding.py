@@ -7,7 +7,7 @@ from tw_stock_cli.crawlers.tpex.common import get_json
 
 URL = "https://www.tpex.org.tw/web/stock/3insti/qfii/qfii_result.php?l=zh-tw&d={date}"
 REFERER = "https://www.tpex.org.tw/web/stock/3insti/qfii/qfii.php?l=zh-tw"
-COLNAMES = [
+OUTPUT_COLUMNS = [
     "排行",
     "代號",
     "名稱",
@@ -23,7 +23,7 @@ COLNAMES = [
 
 def crawler(date: str) -> pd.DataFrame:
     payload = get_json(URL, date, REFERER)
-    data = table_dataframe(payload, columns=COLNAMES)
+    data = table_dataframe(payload, columns=OUTPUT_COLUMNS)
     if data.empty:
         return pd.DataFrame()
     return data

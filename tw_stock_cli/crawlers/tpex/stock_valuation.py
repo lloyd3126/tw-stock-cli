@@ -3,6 +3,7 @@
 import requests
 
 import pandas as pd
+from tw_stock_cli.crawlers.common import select_and_rename_columns
 from tw_stock_cli.crawlers.common import table_dataframe
 from tw_stock_cli.crawlers.common import roc_date
 
@@ -35,8 +36,7 @@ def crawler(date: str = "2019-01-01") -> pd.DataFrame:
     if data.empty:
         return pd.DataFrame()
 
-    data = data[SOURCE_COLUMNS].copy()
-    data.columns = OUTPUT_COLUMNS
+    data = select_and_rename_columns(data, SOURCE_COLUMNS, OUTPUT_COLUMNS)
     data["date"] = date
     return data
 
