@@ -1,3 +1,5 @@
+"""Fetch MOPS monthly revenue data by company."""
+
 import typing
 
 import pandas as pd
@@ -59,8 +61,8 @@ def crawler(parameter: typing.Dict[str, str]) -> pd.DataFrame:
     return data
 
 if __name__ == "__main__":
-    # _type: sii, otc
-    # foreign: 0, 1
+    # _type selects listed, OTC, emerging, or public-company pages.
+    # foreign selects domestic or foreign-company monthly revenue pages.
     parameter = {"kind":"sii", "year":111, "month":1, "_type":"sii", "foreign":0}
     df = crawler(parameter)
     print(df)

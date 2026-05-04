@@ -1,3 +1,5 @@
+"""Fetch TPEx OTC securities daily open, high, low, and close quotes."""
+
 import datetime
 import json
 import typing
@@ -5,11 +7,11 @@ import typing
 import pandas as pd
 import requests
 
-from crawler_utils import table_dataframe
+from crawler_common import table_dataframe
 
 URL = "https://www.tpex.org.tw/web/stock/aftertrading/otc_quotes_no1430/stk_wn1430_result.php?l=zh-tw&d={}&se=AL&_={}"
 
-# 網頁瀏覽時, 所帶的 request header 參數, 模仿瀏覽器發送 request
+# TPEx quote endpoints expect browser-like request headers.
 HEADER = {
     "Accept": "application/json, text/javascript, */*; q=0.01",
     "Accept-Encoding": "gzip, deflate, br",

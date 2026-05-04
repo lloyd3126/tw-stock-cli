@@ -1,3 +1,5 @@
+"""Fetch TWSE total return index values for the requested month."""
+
 import typing
 import requests
 

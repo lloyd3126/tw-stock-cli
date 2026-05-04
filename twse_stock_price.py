@@ -1,3 +1,5 @@
+"""Fetch TWSE listed securities daily open, high, low, and close quotes."""
+
 import datetime
 import json
 import typing
@@ -5,10 +7,10 @@ import typing
 import pandas as pd
 import requests
 
-from crawler_utils import table_dataframe_by_field
+from crawler_common import table_dataframe_by_field
 
 URL = "https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?response=json&date={}&type=ALLBUT0999&_={}"
-# 網頁瀏覽時, 所帶的 request header 參數, 模仿瀏覽器發送 request
+# TWSE after-trading endpoints expect browser-like request headers.
 HEADER = {
     "Accept": "application/json, text/javascript, */*; q=0.01",
     "Accept-Encoding": "gzip, deflate, br",

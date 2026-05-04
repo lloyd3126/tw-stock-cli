@@ -1,9 +1,11 @@
+"""Fetch TPEx index and total return index values for the requested month."""
+
 import datetime
 import requests
 
 import pandas as pd
 from loguru import logger
-from crawler_utils import table_dataframe
+from crawler_common import table_dataframe
 
 
 def crawler(date: str = "2019-01-01") -> pd.DataFrame:

@@ -1,3 +1,5 @@
+"""Fetch TPEx daily institutional investor buy and sell data."""
+
 import datetime
 import re
 import typing
@@ -8,7 +10,7 @@ from dateutil.relativedelta import relativedelta
 from loguru import logger
 from tqdm import tqdm
 
-from crawler_utils import table_dataframe
+from crawler_common import table_dataframe
 
 
 def header():

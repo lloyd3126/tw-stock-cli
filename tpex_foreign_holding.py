@@ -1,10 +1,12 @@
+"""Fetch TPEx foreign investor holding ratio rankings."""
+
 import datetime
 import typing
 import requests
 
 import pandas as pd
 from loguru import logger
-from crawler_utils import table_dataframe
+from crawler_common import table_dataframe
 
 
 def header():

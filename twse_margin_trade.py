@@ -1,3 +1,5 @@
+"""Fetch TWSE daily margin purchase and short sale balances."""
+
 import datetime
 import typing
 

@@ -1,3 +1,5 @@
+"""Fetch TAIFEX daily futures market data."""
+
 import io
 import typing
 import requests
@@ -8,7 +10,7 @@ from loguru import logger
 
 def header():
     return {
-      "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
         "Accept-Encoding": "gzip, deflate, br",
         "Accept-Language": "zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7",
         "Cache-Control": "no-cache",
@@ -18,7 +20,7 @@ def header():
         "Host": "www.taifex.com.tw",
         "Origin": "https://www.taifex.com.tw",
         "Pragma": "no-cache",
-        "Referer": "https://www.taifex.com.tw/cht/3/dlOptDailyMarketView",
+        "Referer": "https://www.taifex.com.tw/cht/3/dlFutDailyMarketView",
         "Sec-Fetch-Dest": "document",
         "Sec-Fetch-Mode": "navigate",
         "Sec-Fetch-Site": "same-origin",
@@ -29,7 +31,7 @@ def header():
 
 
 def crawler(date:str) -> pd.DataFrame:
-    url = "https://www.taifex.com.tw/cht/3/dlOptDataDown"
+    url = "https://www.taifex.com.tw/cht/3/dlFutDataDown"
     form_data = {
         "down_type": "1",
         "commodity_id": "all",

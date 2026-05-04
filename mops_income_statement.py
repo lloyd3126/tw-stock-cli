@@ -1,9 +1,11 @@
+"""Fetch MOPS quarterly income statement summary tables."""
+
 import typing
 import requests
 import numpy as np
 import pandas as pd
 from loguru import logger
-from crawler_utils import html_tables
+from crawler_common import html_tables
 
 
 def header():
@@ -60,7 +62,7 @@ def crawler(
     return df
 
 if __name__ == "__main__":
-    # kind: sii, otc, rotc, pub
+    # kind selects listed, OTC, emerging, or public-company statement tables.
     parameter = {"kind":"sii", "year":111, "quar":1}
     df = crawler(parameter)
     print(df)

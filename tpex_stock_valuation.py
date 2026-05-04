@@ -1,7 +1,9 @@
+"""Fetch TPEx PER, dividend yield, and price-to-book ratio data."""
+
 import requests
 
 import pandas as pd
-from crawler_utils import table_dataframe
+from crawler_common import table_dataframe
 
 
 def crawler(date: str = "2019-01-01") -> pd.DataFrame:

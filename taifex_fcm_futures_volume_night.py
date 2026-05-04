@@ -1,3 +1,5 @@
+"""Fetch TAIFEX FCM futures trading volume for the night session."""
+
 import io
 import typing
 import requests

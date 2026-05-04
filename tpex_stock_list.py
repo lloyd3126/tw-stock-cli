@@ -1,3 +1,5 @@
+"""Fetch TPEx OTC security codes and names for a trading date."""
+
 import typing
 
 import pandas as pd
@@ -5,7 +7,7 @@ import requests
 from loguru import logger
 from lxml import etree
 
-from crawler_utils import table_dataframe
+from crawler_common import table_dataframe
 
 
 def header():

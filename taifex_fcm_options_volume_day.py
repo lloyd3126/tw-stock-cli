@@ -1,3 +1,5 @@
+"""Fetch TAIFEX FCM options trading volume for the regular session."""
+
 import io
 import typing
 import requests
@@ -28,7 +30,7 @@ def header():
 
 
 def crawler():
-    url = "https://www.taifex.com.tw/cht/7/getFCMFile?filename=Daily_OPT_night.csv"
+    url = "https://www.taifex.com.tw/cht/7/getFCMFile?filename=Daily_OPT_day.csv"
     resp = requests.get(url=url, headers=header())
     if not resp.ok or not resp.content:
         logger.info("get request does not return valid content")

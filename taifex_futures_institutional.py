@@ -1,3 +1,5 @@
+"""Fetch TAIFEX futures institutional investor positions and open interest."""
+
 import typing
 import io
 import requests

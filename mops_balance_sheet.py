@@ -1,9 +1,11 @@
+"""Fetch MOPS quarterly balance sheet summary tables."""
+
 import typing
 import requests
 
 import pandas as pd
 from loguru import logger
-from crawler_utils import html_tables
+from crawler_common import html_tables
 
 
 def header():
@@ -53,7 +55,7 @@ def crawler(parameter: typing.Dict[str, str]) -> pd.DataFrame:
     return df
 
 if __name__ == "__main__":
-    # kind: sii, otc, rotc, pub
+    # kind selects listed, OTC, emerging, or public-company statement tables.
     parameter = {"kind":"sii", "year":111, "quar":1}
     df = crawler(parameter)
     print(df)

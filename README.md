@@ -44,6 +44,17 @@ uv run tw-stock list-datasets --group taifex
 uv run tw-stock list-datasets --group mops
 ```
 
+## Source Layout
+
+Crawler module names follow the source and dataset topic:
+
+- `twse_*`: TWSE listed market datasets
+- `tpex_*`: TPEx OTC market datasets
+- `taifex_*`: TAIFEX futures and options datasets
+- `mops_*`: MOPS financial disclosure datasets
+- `crawler_common.py`: shared HTTP and DataFrame helpers
+- `tw_stock_cli/registry.py`: dataset catalog and crawler dispatch
+
 ## Notes
 
 Exchange endpoints can change response shapes. For reliable workflows, run `validate` before building reports or exports that users rely on.

@@ -1,3 +1,5 @@
+"""Fetch TAIFEX futures tick data for one trading date."""
+
 import ssl
 
 import pandas as pd
@@ -22,15 +24,13 @@ def header():
     }
 
 
-
-def crawler(date: str) -> pd.DataFrame:
+def crawler(date:str) -> pd.DataFrame:
     try:
         ssl._create_default_https_context = ssl._create_unverified_context
         data = pd.read_csv(
-            "https://www.taifex.com.tw/file/taifex/Dailydownload/OptionsDailydownloadCSV/OptionsDaily_{}.zip".format(date.replace("-", "_")),
+            "https://www.taifex.com.tw/file/taifex/Dailydownload/DailydownloadCSV/Daily_{}.zip".format(date.replace("-", "_")),
             encoding="big5hkscs",
             low_memory=False,
-            skiprows=[1],
         )
     except BaseException:
         return pd.DataFrame()

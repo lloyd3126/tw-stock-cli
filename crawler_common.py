@@ -1,3 +1,5 @@
+"""Shared HTTP and DataFrame helpers for exchange crawler modules."""
+
 import io
 import typing
 
@@ -14,6 +16,7 @@ DEFAULT_HEADERS = {
 
 
 def roc_date(date: str) -> str:
+    """Convert an ISO-like AD date to the ROC date format used by some sources."""
     parts = date.replace("-", "/").split("/")
     parts[0] = str(int(parts[0]) - 1911)
     return "/".join(parts)
@@ -24,6 +27,7 @@ def get_json(
     headers: typing.Optional[typing.Dict[str, str]] = None,
     timeout: int = 30,
 ) -> typing.Dict[str, typing.Any]:
+    """Fetch JSON with exchange-friendly default headers."""
     merged_headers = dict(DEFAULT_HEADERS)
     if headers:
         merged_headers.update(headers)
@@ -38,6 +42,7 @@ def post(
     headers: typing.Optional[typing.Dict[str, str]] = None,
     timeout: int = 30,
 ) -> requests.Response:
+    """POST form data with exchange-friendly default headers."""
     merged_headers = dict(DEFAULT_HEADERS)
     if headers:
         merged_headers.update(headers)
@@ -51,6 +56,7 @@ def table_dataframe(
     table_index: int = 0,
     columns: typing.Optional[typing.Sequence[str]] = None,
 ) -> pd.DataFrame:
+    """Convert the common TWSE/TPEx JSON table shape into a DataFrame."""
     if "tables" in payload:
         tables = payload.get("tables") or []
         if not tables:
@@ -72,6 +78,7 @@ def table_dataframe_by_field(
     field_name: str,
     columns: typing.Optional[typing.Sequence[str]] = None,
 ) -> pd.DataFrame:
+    """Return the first JSON table whose field list contains the requested field."""
     for table in payload.get("tables", []):
         fields = table.get("fields", [])
         if field_name in fields:
@@ -81,6 +88,7 @@ def table_dataframe_by_field(
 
 
 def html_tables(html: str) -> typing.List[pd.DataFrame]:
+    """Parse HTML tables and normalize source error pages to an empty result."""
     if not html or "PAGE CANNOT BE ACCESSED" in html or "頁面無法執行" in html:
         return []
     return pd.read_html(io.StringIO(html), header=None)

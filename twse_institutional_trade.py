@@ -1,3 +1,5 @@
+"""Fetch TWSE daily institutional investor buy and sell data."""
+
 import typing
 
 import pandas as pd

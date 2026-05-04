@@ -1,3 +1,5 @@
+"""Fetch TWSE PER, dividend yield, and price-to-book ratio data."""
+
 import typing
 import requests
 

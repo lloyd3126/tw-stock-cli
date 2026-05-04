@@ -1,3 +1,5 @@
+"""Fetch TWSE foreign and mainland China investor holding statistics."""
+
 import typing
 
 import pandas as pd

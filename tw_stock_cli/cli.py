@@ -1,3 +1,5 @@
+"""Command-line interface for discovering, fetching, and validating datasets."""
+
 from __future__ import annotations
 
 import argparse
