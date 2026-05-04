@@ -1,0 +1,58 @@
+[project]
+name = "tw-stock-cli"
+version = "0.1.0"
+requires-python = ">=3.10"
+dependencies = [
+    "beautifulsoup4",
+    "brotli",
+    "html5lib",
+    "loguru",
+    "lxml",
+    "pandas",
+    "pandas-datareader",
+    "python-dateutil",
+    "requests",
+    "tqdm",
+]
+
+[project.scripts]
+tw-stock = "tw_stock_cli.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+py-modules = [
+    "crawler_utils",
+    "taiwan_taifex_futures_daily",
+    "taiwan_taifex_futures_dealer_trading_volume_daily",
+    "taiwan_taifex_futures_dealer_trading_volume_daily_night",
+    "taiwan_taifex_futures_institutional_investors",
+    "taiwan_taifex_futures_tick",
+    "taiwan_taifex_option_daily",
+    "taiwan_taifex_options_dealer_trading_volume_daily",
+    "taiwan_taifex_options_dealer_trading_volume_daily_night",
+    "taiwan_taifex_options_tick",
+    "taiwan_tpex_share_holding",
+    "taiwan_tpex_stock_institutional_investors_buy_sell",
+    "taiwan_tpex_stock_list",
+    "taiwan_tpex_stock_margin_purchase_short_sale",
+    "taiwan_tpex_stock_per",
+    "taiwan_tpex_stock_price",
+    "taiwan_tpex_total_return_Index",
+    "taiwan_twse_mops_balance_sheet",
+    "taiwan_twse_mops_cash_flows_statement",
+    "taiwan_twse_mops_financial_statements",
+    "taiwan_twse_mops_month_revenue",
+    "taiwan_twse_share_holding",
+    "taiwan_twse_stock_institutional_investors_buy_sell",
+    "taiwan_twse_stock_list",
+    "taiwan_twse_stock_margin_purchase_short_sale",
+    "taiwan_twse_stock_per",
+    "taiwan_twse_stock_price",
+    "taiwan_twse_total_return_Index",
+]
+
+[tool.setuptools.packages.find]
+include = ["tw_stock_cli*"]
