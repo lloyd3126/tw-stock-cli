@@ -19,7 +19,9 @@ pytestmark = pytest.mark.skipif(
     ("dataset_id", "params"),
     [
         ("twse.stock-price", {"date": "2026-04-30"}),
+        ("twse.margin-trade", {"date": "2026-04-30"}),
         ("tpex.stock-price", {"date": "2026-04-30"}),
+        ("tpex.margin-trade", {"date": "2026-04-30"}),
         ("tpex.institutional-trade", {"date": "2026-04-30"}),
         ("taifex.futures-daily", {"date": "2026-04-30"}),
         ("taifex.futures-institutional", {"date": "2026-04-30"}),

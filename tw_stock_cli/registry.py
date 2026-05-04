@@ -131,7 +131,7 @@ DATASETS: dict[str, Dataset] = {
         description="TWSE margin purchase and short sale balances.",
         module="tw_stock_cli.crawlers.twse.margin_trade",
         kind="date",
-        returns=("股票代號", "股票名稱", "融資_今日餘額", "融劵_今日餘額"),
+        returns=("股票代號", "股票名稱", "融資_今日餘額", "融券_今日餘額"),
         source_urls=("https://www.twse.com.tw/exchangeReport/MI_MARGN",),
     ),
     "twse.foreign-holding": Dataset(
@@ -224,7 +224,7 @@ DATASETS: dict[str, Dataset] = {
         description="TPEx margin purchase and short sale balances.",
         module="tw_stock_cli.crawlers.tpex.margin_trade",
         kind="date",
-        returns=("代號", "名稱", "融資_資餘額", "融劵_資餘額"),
+        returns=("代號", "名稱", "融資_資餘額", "融券_券餘額"),
         source_urls=(
             "https://www.tpex.org.tw/web/stock/margin_trading/margin_balance/margin_bal_result.php",
         ),

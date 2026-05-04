@@ -34,6 +34,33 @@ def test_dataset_modules_are_importable_and_expose_crawler() -> None:
         assert hasattr(module, "crawler"), dataset.module
 
 
+def test_column_contract_constants_are_consistent() -> None:
+    for dataset in DATASETS.values():
+        module = import_module(dataset.module)
+        source_columns = getattr(module, "SOURCE_COLUMNS", None)
+        output_columns = getattr(module, "OUTPUT_COLUMNS", None)
+
+        if source_columns is not None:
+            assert output_columns is not None, dataset.module
+            assert len(source_columns) == len(output_columns), dataset.module
+
+        if output_columns is not None:
+            assert len(output_columns) == len(set(output_columns)), dataset.module
+            assert all("劵" not in column for column in output_columns), dataset.module
+
+
+def test_dataset_returns_are_consistent_with_column_contracts() -> None:
+    for dataset in DATASETS.values():
+        module = import_module(dataset.module)
+        output_columns = getattr(module, "OUTPUT_COLUMNS", None)
+        if output_columns is None:
+            continue
+
+        available_columns = {*output_columns, "date"}
+        assert set(dataset.returns) <= available_columns, dataset.id
+        assert all("劵" not in column for column in dataset.returns), dataset.id
+
+
 def test_list_datasets_is_sorted_and_filterable_by_group() -> None:
     datasets = list_datasets()
     twse_datasets = list_datasets("twse")
