@@ -18,8 +18,14 @@ def crawler(date: str = "2019-01-01") -> pd.DataFrame:
     if df.empty:
         return pd.DataFrame()
 
-    df = df.rename(columns={"櫃買報酬指數(基期:94/12/30)": "櫃買報酬指數"})
-    df["日期"] = df["日期"].apply(
+    df = df.rename(
+        columns={
+            "日期": "date",
+            "櫃買指數": "index",
+            "櫃買報酬指數(基期:94/12/30)": "total_return_index",
+        }
+    )
+    df["date"] = df["date"].apply(
         lambda d: datetime.datetime.strptime(str(int(d) + 19110000), "%Y%m%d").strftime(
             "%Y-%m-%d"
         )

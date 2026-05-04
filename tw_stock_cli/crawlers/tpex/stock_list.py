@@ -10,12 +10,16 @@ from lxml import etree
 from tw_stock_cli.crawlers.common import HTML_ACCEPT
 from tw_stock_cli.crawlers.common import request_headers
 from tw_stock_cli.crawlers.common import roc_date
+from tw_stock_cli.crawlers.common import select_and_rename_columns
 from tw_stock_cli.crawlers.common import table_dataframe
 from tw_stock_cli.crawlers.tpex.common import headers
 
 
 CATEGORY_URL = "https://www.tpex.org.tw/web/stock/aftertrading/otc_quotes_no1430/stk_wn1430.php?l=zh-tw"
 QUOTE_URL = "https://www.tpex.org.tw/web/stock/aftertrading/otc_quotes_no1430/stk_wn1430_result.php?l=zh-tw&d={date}&se={category_id}"
+SOURCE_COLUMNS = ["代號", "名稱"]
+OUTPUT_COLUMNS = ["stock_id", "stock_name"]
+EXTRA_COLUMNS = ["industry_category"]
 
 
 def excluded_categories() -> set[str]:
@@ -78,6 +82,8 @@ def crawler(date: str) -> pd.DataFrame:
         data = table_dataframe(response.json())
         if data.empty:
             continue
+        data = select_and_rename_columns(data, SOURCE_COLUMNS, OUTPUT_COLUMNS)
+        data["industry_category"] = category["industry_category"]
         frames.append(data)
     if not frames:
         return pd.DataFrame()

@@ -14,7 +14,7 @@ from tw_stock_cli.crawlers.twse.common import headers
 URL = "https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?response=json&date={}&type=ALLBUT0999&_={}"
 REFERER = "https://www.twse.com.tw/zh/page/trading/exchange/MI_INDEX.html"
 SOURCE_COLUMNS = ["證券代號", "證券名稱", "開盤價", "最高價", "最低價", "收盤價"]
-OUTPUT_COLUMNS = ["stock_id", "stock_name", "open", "max", "min", "close"]
+OUTPUT_COLUMNS = ["stock_id", "stock_name", "open", "high", "low", "close"]
 
 
 def crawler(parameters: dict[str, Any]) -> pd.DataFrame:

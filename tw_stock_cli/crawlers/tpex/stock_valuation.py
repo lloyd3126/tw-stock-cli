@@ -21,11 +21,11 @@ SOURCE_COLUMNS = [
 OUTPUT_COLUMNS = [
     "stock_id",
     "stock_name",
-    "PER",
+    "per",
     "dividend_per_share",
-    "year",
+    "dividend_year",
     "dividend_yield",
-    "PBR",
+    "pbr",
 ]
 
 

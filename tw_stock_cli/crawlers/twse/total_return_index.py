@@ -15,7 +15,13 @@ def crawler(date: str) -> pd.DataFrame:
     if is_no_data(payload):
         return pd.DataFrame()
     columns = [column.replace("\u3000", "") for column in payload["fields"]]
-    return pd.DataFrame(list(payload["data"]), columns=columns)
+    data = pd.DataFrame(list(payload["data"]), columns=columns)
+    return data.rename(
+        columns={
+            "日期": "date",
+            "發行量加權股價報酬指數": "total_return_index",
+        }
+    )
 
 
 if __name__ == "__main__":

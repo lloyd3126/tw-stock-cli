@@ -108,6 +108,19 @@ def select_and_rename_columns(
     return result
 
 
+def strip_column_names(frame: pd.DataFrame) -> pd.DataFrame:
+    """Return a copy whose column labels have source whitespace removed."""
+    result = frame.copy()
+    result.columns = [str(column).strip() for column in result.columns]
+    return result
+
+
+def rename_columns(frame: pd.DataFrame, column_map: dict[str, str]) -> pd.DataFrame:
+    """Rename known source columns after stripping source whitespace."""
+    result = strip_column_names(frame)
+    return result.rename(columns=column_map)
+
+
 def flatten_column_names(columns: Sequence[Any]) -> list[str]:
     """Flatten pandas MultiIndex columns into stable string names."""
     names = []

@@ -46,8 +46,8 @@ def test_describe_json_outputs_single_dataset_metadata(
         "stock_id",
         "stock_name",
         "open",
-        "max",
-        "min",
+        "high",
+        "low",
         "close",
         "date",
     ]

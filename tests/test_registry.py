@@ -53,10 +53,11 @@ def test_dataset_returns_are_consistent_with_column_contracts() -> None:
     for dataset in DATASETS.values():
         module = import_module(dataset.module)
         output_columns = getattr(module, "OUTPUT_COLUMNS", None)
+        extra_columns = getattr(module, "EXTRA_COLUMNS", [])
         if output_columns is None:
             continue
 
-        available_columns = {*output_columns, "date"}
+        available_columns = {*output_columns, *extra_columns, "date"}
         assert set(dataset.returns) <= available_columns, dataset.id
         assert all("劵" not in column for column in dataset.returns), dataset.id
 

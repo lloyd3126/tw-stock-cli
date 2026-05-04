@@ -7,6 +7,7 @@ import requests
 
 from tw_stock_cli.crawlers.common import request_headers
 from tw_stock_cli.crawlers.common import html_tables
+from tw_stock_cli.crawlers.common import rename_columns
 
 
 STATEMENT_ORIGIN = "https://mopsov.twse.com.tw"
@@ -18,6 +19,13 @@ NO_DATA_MARKERS = (
     "資料庫中查無需求資料",
     "查詢無資料!",
 )
+STATEMENT_COLUMN_MAP = {
+    0: "section",
+    "0": "section",
+    "公司 代號": "stock_id",
+    "公司代號": "stock_id",
+    "公司名稱": "stock_name",
+}
 
 
 def statement_form_data(parameter: dict[str, Any]) -> dict[str, Any]:
@@ -58,4 +66,9 @@ def fetch_statement_tables(
     )
     if has_no_data(response.text):
         return []
-    return html_tables(response.text)
+    return [normalize_statement_table(table) for table in html_tables(response.text)]
+
+
+def normalize_statement_table(table: pd.DataFrame) -> pd.DataFrame:
+    """Normalize common MOPS statement identifier columns."""
+    return rename_columns(table, STATEMENT_COLUMN_MAP)

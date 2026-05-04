@@ -9,22 +9,22 @@ from tw_stock_cli.crawlers.twse.common import get_json
 URL = "http://www.twse.com.tw/exchangeReport/MI_MARGN?response=json&date={date}&selectType=ALL"
 REFERER = "http://www.twse.com.tw/zh/page/trading/exchange/MI_MARGN.html"
 OUTPUT_COLUMNS = [
-    "股票代號",
-    "股票名稱",
-    "融資_買進",
-    "融資_賣出",
-    "融資_現金償還",
-    "融資_前日餘額",
-    "融資_今日餘額",
-    "融資_次一營業日限額",
-    "融券_買進",
-    "融券_賣出",
-    "融券_現券償還",
-    "融券_前日餘額",
-    "融券_今日餘額",
-    "融券_次一營業日限額",
-    "資券互抵",
-    "註記",
+    "stock_id",
+    "stock_name",
+    "margin_purchase_buy",
+    "margin_purchase_sell",
+    "margin_purchase_cash_repayment",
+    "margin_purchase_previous_balance",
+    "margin_purchase_balance",
+    "margin_purchase_next_limit",
+    "short_sale_buy",
+    "short_sale_sell",
+    "short_sale_stock_repayment",
+    "short_sale_previous_balance",
+    "short_sale_balance",
+    "short_sale_next_limit",
+    "offsetting_trade",
+    "note",
 ]
 
 

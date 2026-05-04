@@ -20,8 +20,8 @@ OUTPUT_COLUMNS = [
     "stock_name",
     "close",
     "open",
-    "max",
-    "min",
+    "high",
+    "low",
 ]
 
 
