@@ -7,27 +7,20 @@ import requests
 import pandas as pd
 from lxml import etree
 
+from tw_stock_cli.crawlers.common import HTML_ACCEPT
+from tw_stock_cli.crawlers.common import request_headers
+from tw_stock_cli.crawlers.taifex.common import TAIFEX_ORIGIN
+
 
 URL = "https://www.taifex.com.tw/cht/3/futContractsDate"
-HEADERS = {
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
-    "Accept-Encoding": "gzip, deflate, br",
-    "Accept-Language": "zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7",
-    "Cache-Control": "no-cache",
-    "Connection": "keep-alive",
-    "Content-Length": "78",
-    "Content-Type": "application/x-www-form-urlencoded",
-    "Host": "www.taifex.com.tw",
-    "Origin": "https://www.taifex.com.tw",
-    "Pragma": "no-cache",
-    "Referer": URL,
-    "Sec-Fetch-Dest": "document",
-    "Sec-Fetch-Mode": "navigate",
-    "Sec-Fetch-Site": "same-origin",
-    "Sec-Fetch-User": "?1",
-    "Upgrade-Insecure-Requests": "1",
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36",
-}
+HEADERS = request_headers(
+    accept=HTML_ACCEPT,
+    referer=URL,
+    origin=TAIFEX_ORIGIN,
+    content_type="application/x-www-form-urlencoded",
+    cache_control="no-cache",
+    upgrade_insecure=True,
+)
 
 
 def crawler_future(resp_text: str) -> pd.DataFrame:

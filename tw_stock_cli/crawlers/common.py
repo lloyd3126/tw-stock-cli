@@ -7,12 +7,51 @@ import pandas as pd
 import requests
 
 
+DEFAULT_USER_AGENT = (
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+    "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"
+)
+JSON_ACCEPT = "application/json, text/javascript, */*; q=0.01"
+HTML_ACCEPT = (
+    "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"
+)
+
 DEFAULT_HEADERS = {
-    "Accept": "application/json, text/javascript, */*; q=0.01",
-    "Accept-Encoding": "gzip, deflate",
+    "Accept": "*/*",
     "Accept-Language": "zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7",
-    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36",
+    "User-Agent": DEFAULT_USER_AGENT,
 }
+
+
+def request_headers(
+    *,
+    accept: str = "*/*",
+    referer: Optional[str] = None,
+    origin: Optional[str] = None,
+    content_type: Optional[str] = None,
+    ajax: bool = False,
+    cache_control: Optional[str] = None,
+    upgrade_insecure: bool = False,
+    extra: Optional[dict[str, str]] = None,
+) -> dict[str, str]:
+    """Build stable browser-like headers while leaving transport headers to requests."""
+    headers = {**DEFAULT_HEADERS, "Accept": accept}
+    if referer:
+        headers["Referer"] = referer
+    if origin:
+        headers["Origin"] = origin
+    if content_type:
+        headers["Content-Type"] = content_type
+    if ajax:
+        headers["X-Requested-With"] = "XMLHttpRequest"
+    if cache_control:
+        headers["Cache-Control"] = cache_control
+        headers["Pragma"] = "no-cache"
+    if upgrade_insecure:
+        headers["Upgrade-Insecure-Requests"] = "1"
+    if extra:
+        headers.update(extra)
+    return headers
 
 
 def compact_date(date: str) -> str:

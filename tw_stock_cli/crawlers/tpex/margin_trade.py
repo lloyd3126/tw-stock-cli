@@ -5,20 +5,12 @@ import requests
 from loguru import logger
 
 from tw_stock_cli.crawlers.common import table_dataframe
-from tw_stock_cli.crawlers.tpex.common import roc_date
+from tw_stock_cli.crawlers.common import roc_date
+from tw_stock_cli.crawlers.tpex.common import headers
 
 
 URL = "https://www.tpex.org.tw/web/stock/margin_trading/margin_balance/margin_bal_result.php?l=zh-tw&o=json&d={date}"
-HEADERS = {
-    "Accept": "application/json, text/javascript, */*; q=0.01",
-    "Accept-Encoding": "gzip, deflate, br",
-    "Accept-Language": "zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7",
-    "Connection": "keep-alive",
-    "Host": "www.tpex.org.tw",
-    "Referer": "https://www.tpex.org.tw/web/stock/margin_trading/margin_balance/margin_bal.php?l=zh-tw",
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36",
-    "X-Requested-With": "XMLHttpRequest",
-}
+REFERER = "https://www.tpex.org.tw/web/stock/margin_trading/margin_balance/margin_bal.php?l=zh-tw"
 COLNAMES = [
     "代號",
     "名稱",
@@ -47,7 +39,9 @@ def crawler(date: str) -> pd.DataFrame:
     if date < "2007-01-01":
         return pd.DataFrame()
     try:
-        response = requests.get(url=URL.format(date=roc_date(date)), headers=HEADERS)
+        response = requests.get(
+            url=URL.format(date=roc_date(date)), headers=headers(REFERER)
+        )
         data = table_dataframe(response.json(), columns=COLNAMES)
     except Exception as e:
         logger.error(e)

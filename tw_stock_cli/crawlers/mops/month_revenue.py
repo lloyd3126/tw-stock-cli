@@ -7,17 +7,14 @@ import requests
 from loguru import logger
 from lxml import etree
 
+from tw_stock_cli.crawlers.common import HTML_ACCEPT
+from tw_stock_cli.crawlers.common import request_headers
 
-HEADERS = {
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
-    "Accept-Encoding": "gzip, deflate",
-    "Accept-Language": "zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7",
-    "Cache-Control": "max-age=0",
-    "Connection": "keep-alive",
-    "Host": "mops.twse.com.tw",
-    "Upgrade-Insecure-Requests": "1",
-    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.109 Safari/537.36",
-}
+HEADERS = request_headers(
+    accept=HTML_ACCEPT,
+    cache_control="max-age=0",
+    upgrade_insecure=True,
+)
 
 
 def source_url(kind: str, year: int, month: int, foreign: int) -> str:

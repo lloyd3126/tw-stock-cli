@@ -8,43 +8,31 @@ import pandas as pd
 import requests
 from loguru import logger
 
+from tw_stock_cli.crawlers.common import HTML_ACCEPT
+from tw_stock_cli.crawlers.common import request_headers
 
-BASE_HEADERS = {
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
-    "Accept-Encoding": "gzip, deflate, br",
-    "Accept-Language": "zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7",
-    "Cache-Control": "no-cache",
-    "Connection": "keep-alive",
-    "Host": "www.taifex.com.tw",
-    "Origin": "https://www.taifex.com.tw",
-    "Pragma": "no-cache",
-    "Upgrade-Insecure-Requests": "1",
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.113 Safari/537.36",
-}
+TAIFEX_ORIGIN = "https://www.taifex.com.tw"
 
-FCM_HEADERS = {
-    **BASE_HEADERS,
-    "Content-Type": "application/octet-stream;charset=UTF-8",
-    "Referer": "https://www.taifex.com.tw/cht/7/dailyFCM?menuid1=03",
-    "Sec-Fetch-Dest": "document",
-    "Sec-Fetch-Mode": "navigate",
-    "Sec-Fetch-Site": "none",
-    "Sec-Fetch-User": "?1",
-}
+FCM_HEADERS = request_headers(
+    accept=HTML_ACCEPT,
+    referer="https://www.taifex.com.tw/cht/7/dailyFCM?menuid1=03",
+    origin=TAIFEX_ORIGIN,
+    content_type="application/octet-stream;charset=UTF-8",
+    cache_control="no-cache",
+    upgrade_insecure=True,
+)
 
 
 def market_download_headers(referer: str) -> dict[str, str]:
     """Build headers for daily futures/options download endpoints."""
-    return {
-        **BASE_HEADERS,
-        "Content-Length": "101",
-        "Content-Type": "application/x-www-form-urlencoded",
-        "Referer": referer,
-        "Sec-Fetch-Dest": "document",
-        "Sec-Fetch-Mode": "navigate",
-        "Sec-Fetch-Site": "same-origin",
-        "Sec-Fetch-User": "?1",
-    }
+    return request_headers(
+        accept=HTML_ACCEPT,
+        referer=referer,
+        origin=TAIFEX_ORIGIN,
+        content_type="application/x-www-form-urlencoded",
+        cache_control="no-cache",
+        upgrade_insecure=True,
+    )
 
 
 def market_form_data(date: str) -> dict[str, str]:

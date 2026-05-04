@@ -3,17 +3,9 @@
 import requests
 
 from tw_stock_cli.crawlers.common import compact_date
+from tw_stock_cli.crawlers.common import JSON_ACCEPT
+from tw_stock_cli.crawlers.common import request_headers
 
-
-JSON_HEADERS = {
-    "Accept": "application/json, text/javascript, */*; q=0.01",
-    "Accept-Encoding": "gzip, deflate",
-    "Accept-Language": "zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7",
-    "Connection": "keep-alive",
-    "Host": "www.twse.com.tw",
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0 Safari/537.36",
-    "X-Requested-With": "XMLHttpRequest",
-}
 
 NO_DATA_STATUSES = {
     "很抱歉，沒有符合條件的資料!",
@@ -24,7 +16,7 @@ NO_DATA_STATUSES = {
 
 def headers(referer: str) -> dict[str, str]:
     """Build TWSE JSON request headers for a source page."""
-    return {**JSON_HEADERS, "Referer": referer}
+    return request_headers(accept=JSON_ACCEPT, referer=referer, ajax=True)
 
 
 def get_json(url: str, date: str, referer: str) -> dict:

@@ -7,21 +7,13 @@ import requests
 from loguru import logger
 from lxml import etree
 
+from tw_stock_cli.crawlers.common import HTML_ACCEPT
+from tw_stock_cli.crawlers.common import request_headers
 from tw_stock_cli.crawlers.common import roc_date
 from tw_stock_cli.crawlers.common import table_dataframe
+from tw_stock_cli.crawlers.tpex.common import headers
 
 
-HEADERS = {
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3",
-    "Accept-Encoding": "gzip, deflate, br",
-    "Accept-Language": "zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7",
-    "Cache-Control": "no-cache",
-    "Connection": "keep-alive",
-    "Host": "www.tpex.org.tw",
-    "Pragma": "no-cache",
-    "Upgrade-Insecure-Requests": "1",
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.90 Safari/537.36",
-}
 CATEGORY_URL = "https://www.tpex.org.tw/web/stock/aftertrading/otc_quotes_no1430/stk_wn1430.php?l=zh-tw"
 QUOTE_URL = "https://www.tpex.org.tw/web/stock/aftertrading/otc_quotes_no1430/stk_wn1430_result.php?l=zh-tw&d={date}&se={category_id}"
 
@@ -52,7 +44,14 @@ def excluded_categories() -> set[str]:
 
 
 def create_industry_category_id() -> list[dict[str, Any]]:
-    res = requests.get(CATEGORY_URL, headers=HEADERS)
+    res = requests.get(
+        CATEGORY_URL,
+        headers=request_headers(
+            accept=HTML_ACCEPT,
+            cache_control="no-cache",
+            upgrade_insecure=True,
+        ),
+    )
     res.encoding = "utf-8"
     page = etree.HTML(res.text)
     if page is None:
@@ -74,7 +73,7 @@ def crawler(date: str) -> pd.DataFrame:
         logger.info(f"crawler id: {category}")
         response = requests.get(
             QUOTE_URL.format(date=roc_date(date), category_id=category.get("_id")),
-            headers=HEADERS,
+            headers=headers(CATEGORY_URL),
         )
         data = table_dataframe(response.json())
         if data.empty:
