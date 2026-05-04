@@ -1,23 +1,21 @@
 """Fetch TWSE total return index values for the requested month."""
 
-import typing
-import requests
-
 import pandas as pd
-from loguru import logger
+
+from tw_stock_cli.crawlers.twse.common import get_json
+from tw_stock_cli.crawlers.twse.common import is_no_data
+
+
+URL = "https://www.twse.com.tw/indicesReport/MFI94U?response=json&date={date}"
+REFERER = "https://www.twse.com.tw/zh/indices/taiex/mi-5min-hist.html"
 
 
 def crawler(date: str) -> pd.DataFrame:
-    url = "https://www.twse.com.tw/indicesReport/MFI94U?response=json&date={}".format(date.replace("-", ""))
-    response = requests.get(url)
-    if response.json()["stat"] in ["很抱歉，沒有符合條件的資料!", "查詢日期小於94年9月2日，請重新查詢!"]:
+    payload = get_json(URL, date, REFERER)
+    if is_no_data(payload):
         return pd.DataFrame()
-
-    colname = [col.replace("\u3000", "") for col in response.json()["fields"]]
-    df = response.json()["data"]
-    df = pd.DataFrame(list(df), columns=colname)
-    return df
-
+    columns = [column.replace("\u3000", "") for column in payload["fields"]]
+    return pd.DataFrame(list(payload["data"]), columns=columns)
 
 
 if __name__ == "__main__":

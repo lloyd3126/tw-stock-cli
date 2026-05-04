@@ -1,19 +1,20 @@
 """Fetch TWSE PER, dividend yield, and price-to-book ratio data."""
 
-import typing
-import requests
-
 import pandas as pd
+
+from tw_stock_cli.crawlers.twse.common import get_json
+from tw_stock_cli.crawlers.twse.common import is_no_data
+
+
+URL = "https://www.twse.com.tw/exchangeReport/BWIBBU_d?response=json&date={date}&selectType=ALL"
+REFERER = "https://www.twse.com.tw/zh/trading/historical/bwibbu.html"
 
 
 def crawler(date: str) -> pd.DataFrame:
-    URL = "https://www.twse.com.tw/exchangeReport/BWIBBU_d?response=json&date={0}&selectType=ALL".format(date.replace("-", ""))
-    response = requests.get(URL)
-    if response.json()["stat"] in ["很抱歉，沒有符合條件的資料!", "查詢日期小於94年9月2日，請重新查詢!"]:
+    payload = get_json(URL, date, REFERER)
+    if is_no_data(payload):
         return pd.DataFrame()
-
-    data = response.json()["data"]
-    data = pd.DataFrame(list(data), columns=response.json()["fields"])
+    data = pd.DataFrame(list(payload["data"]), columns=payload["fields"])
     data["date"] = date
     return data
 

@@ -101,7 +101,17 @@ DATASETS: dict[str, Dataset] = {
         description="TWSE PER, dividend yield, and price-to-book ratio by security.",
         module="tw_stock_cli.crawlers.twse.stock_valuation",
         kind="date",
-        returns=("證券代號", "證券名稱", "收盤價", "殖利率(%)", "股利年度", "本益比", "股價淨值比", "財報年/季", "date"),
+        returns=(
+            "證券代號",
+            "證券名稱",
+            "收盤價",
+            "殖利率(%)",
+            "股利年度",
+            "本益比",
+            "股價淨值比",
+            "財報年/季",
+            "date",
+        ),
         source_urls=("https://www.twse.com.tw/exchangeReport/BWIBBU_d",),
     ),
     "twse.institutional-trade": Dataset(
@@ -131,7 +141,13 @@ DATASETS: dict[str, Dataset] = {
         description="Foreign and mainland China investor holding statistics for TWSE listed securities.",
         module="tw_stock_cli.crawlers.twse.foreign_holding",
         kind="date",
-        returns=("證券代號", "證券名稱", "發行股數", "全體外資及陸資持有股數", "全體外資及陸資持股比率"),
+        returns=(
+            "證券代號",
+            "證券名稱",
+            "發行股數",
+            "全體外資及陸資持有股數",
+            "全體外資及陸資持股比率",
+        ),
         source_urls=("https://www.twse.com.tw/fund/MI_QFIIS",),
     ),
     "twse.total-return-index": Dataset(
@@ -152,7 +168,9 @@ DATASETS: dict[str, Dataset] = {
         module="tw_stock_cli.crawlers.tpex.stock_price",
         kind="date",
         returns=("stock_id", "stock_name", "close", "open", "max", "min", "date"),
-        source_urls=("https://www.tpex.org.tw/web/stock/aftertrading/otc_quotes_no1430/stk_wn1430_result.php",),
+        source_urls=(
+            "https://www.tpex.org.tw/web/stock/aftertrading/otc_quotes_no1430/stk_wn1430_result.php",
+        ),
     ),
     "tpex.stock-list": Dataset(
         id="tpex.stock-list",
@@ -162,7 +180,9 @@ DATASETS: dict[str, Dataset] = {
         module="tw_stock_cli.crawlers.tpex.stock_list",
         kind="date",
         returns=("代號", "名稱", "date"),
-        source_urls=("https://www.tpex.org.tw/web/stock/aftertrading/otc_quotes_no1430/stk_wn1430_result.php",),
+        source_urls=(
+            "https://www.tpex.org.tw/web/stock/aftertrading/otc_quotes_no1430/stk_wn1430_result.php",
+        ),
     ),
     "tpex.stock-per": Dataset(
         id="tpex.stock-per",
@@ -171,8 +191,19 @@ DATASETS: dict[str, Dataset] = {
         description="TPEx PER, dividend yield, and price-to-book ratio by security.",
         module="tw_stock_cli.crawlers.tpex.stock_valuation",
         kind="date",
-        returns=("stock_id", "stock_name", "PER", "dividend_per_share", "year", "dividend_yield", "PBR", "date"),
-        source_urls=("https://www.tpex.org.tw/web/stock/aftertrading/peratio_analysis/pera_result.php",),
+        returns=(
+            "stock_id",
+            "stock_name",
+            "PER",
+            "dividend_per_share",
+            "year",
+            "dividend_yield",
+            "PBR",
+            "date",
+        ),
+        source_urls=(
+            "https://www.tpex.org.tw/web/stock/aftertrading/peratio_analysis/pera_result.php",
+        ),
     ),
     "tpex.institutional-trade": Dataset(
         id="tpex.institutional-trade",
@@ -182,7 +213,9 @@ DATASETS: dict[str, Dataset] = {
         module="tw_stock_cli.crawlers.tpex.institutional_trade",
         kind="date",
         returns=("代號", "名稱", "三大法人買賣超股數合計"),
-        source_urls=("https://www.tpex.org.tw/web/stock/3insti/daily_trade/3itrade_hedge_result.php",),
+        source_urls=(
+            "https://www.tpex.org.tw/web/stock/3insti/daily_trade/3itrade_hedge_result.php",
+        ),
     ),
     "tpex.margin-trade": Dataset(
         id="tpex.margin-trade",
@@ -192,7 +225,9 @@ DATASETS: dict[str, Dataset] = {
         module="tw_stock_cli.crawlers.tpex.margin_trade",
         kind="date",
         returns=("代號", "名稱", "融資_資餘額", "融劵_資餘額"),
-        source_urls=("https://www.tpex.org.tw/web/stock/margin_trading/margin_balance/margin_bal_result.php",),
+        source_urls=(
+            "https://www.tpex.org.tw/web/stock/margin_trading/margin_balance/margin_bal_result.php",
+        ),
     ),
     "tpex.foreign-holding": Dataset(
         id="tpex.foreign-holding",
@@ -201,7 +236,13 @@ DATASETS: dict[str, Dataset] = {
         description="TPEx foreign investor holding ratio ranking.",
         module="tw_stock_cli.crawlers.tpex.foreign_holding",
         kind="date",
-        returns=("排行", "代號", "名稱", "僑外資及陸資持有股數", "僑外資及陸資持有比率"),
+        returns=(
+            "排行",
+            "代號",
+            "名稱",
+            "僑外資及陸資持有股數",
+            "僑外資及陸資持有比率",
+        ),
         source_urls=("https://www.tpex.org.tw/web/stock/3insti/qfii/qfii_result.php",),
     ),
     "tpex.total-return-index": Dataset(
@@ -212,7 +253,9 @@ DATASETS: dict[str, Dataset] = {
         module="tw_stock_cli.crawlers.tpex.total_return_index",
         kind="date",
         returns=("日期", "櫃買指數", "櫃買報酬指數"),
-        source_urls=("https://www.tpex.org.tw/web/stock/iNdex_info/reward_index/ROE_result.php",),
+        source_urls=(
+            "https://www.tpex.org.tw/web/stock/iNdex_info/reward_index/ROE_result.php",
+        ),
     ),
     "taifex.futures-daily": Dataset(
         id="taifex.futures-daily",
@@ -221,7 +264,16 @@ DATASETS: dict[str, Dataset] = {
         description="TAIFEX daily futures market data.",
         module="tw_stock_cli.crawlers.taifex.futures_daily",
         kind="date",
-        returns=("交易日期", "契約", "到期月份(週別)", "開盤價", "最高價", "最低價", "收盤價", "成交量"),
+        returns=(
+            "交易日期",
+            "契約",
+            "到期月份(週別)",
+            "開盤價",
+            "最高價",
+            "最低價",
+            "收盤價",
+            "成交量",
+        ),
         source_urls=("https://www.taifex.com.tw/cht/3/dlFutDataDown",),
     ),
     "taifex.options-daily": Dataset(
@@ -231,7 +283,15 @@ DATASETS: dict[str, Dataset] = {
         description="TAIFEX daily options market data.",
         module="tw_stock_cli.crawlers.taifex.options_daily",
         kind="date",
-        returns=("交易日期", "契約", "到期月份(週別)", "履約價", "買賣權", "收盤價", "成交量"),
+        returns=(
+            "交易日期",
+            "契約",
+            "到期月份(週別)",
+            "履約價",
+            "買賣權",
+            "收盤價",
+            "成交量",
+        ),
         source_urls=("https://www.taifex.com.tw/cht/3/dlOptDataDown",),
     ),
     "taifex.futures-tick": Dataset(
@@ -241,8 +301,17 @@ DATASETS: dict[str, Dataset] = {
         description="TAIFEX futures tick data. This can be very large.",
         module="tw_stock_cli.crawlers.taifex.futures_tick",
         kind="date",
-        returns=("成交日期", "商品代號", "到期月份(週別)", "成交時間", "成交價格", "成交數量(B+S)"),
-        source_urls=("https://www.taifex.com.tw/file/taifex/Dailydownload/DailydownloadCSV/",),
+        returns=(
+            "成交日期",
+            "商品代號",
+            "到期月份(週別)",
+            "成交時間",
+            "成交價格",
+            "成交數量(B+S)",
+        ),
+        source_urls=(
+            "https://www.taifex.com.tw/file/taifex/Dailydownload/DailydownloadCSV/",
+        ),
         notes="Large dataset. Use --limit for exploration.",
     ),
     "taifex.options-tick": Dataset(
@@ -252,8 +321,18 @@ DATASETS: dict[str, Dataset] = {
         description="TAIFEX options tick data. This can be very large.",
         module="tw_stock_cli.crawlers.taifex.options_tick",
         kind="date",
-        returns=("成交日期", "商品代號", "履約價格", "到期月份(週別)", "買賣權別", "成交時間", "成交價格"),
-        source_urls=("https://www.taifex.com.tw/file/taifex/Dailydownload/OptionsDailydownloadCSV/",),
+        returns=(
+            "成交日期",
+            "商品代號",
+            "履約價格",
+            "到期月份(週別)",
+            "買賣權別",
+            "成交時間",
+            "成交價格",
+        ),
+        source_urls=(
+            "https://www.taifex.com.tw/file/taifex/Dailydownload/OptionsDailydownloadCSV/",
+        ),
         notes="Large dataset. Use --limit for exploration.",
     ),
     "taifex.futures-institutional": Dataset(
@@ -263,7 +342,13 @@ DATASETS: dict[str, Dataset] = {
         description="TAIFEX futures institutional investor positions and open interest.",
         module="tw_stock_cli.crawlers.taifex.futures_institutional",
         kind="date",
-        returns=("序 號", "商品 名稱", "身份別", "交易口數與契約金額_多方_口數", "未平倉餘額_多方_口數"),
+        returns=(
+            "序 號",
+            "商品 名稱",
+            "身份別",
+            "交易口數與契約金額_多方_口數",
+            "未平倉餘額_多方_口數",
+        ),
         source_urls=("https://www.taifex.com.tw/cht/3/futContractsDate",),
     ),
     "taifex.fcm-futures-volume-day": Dataset(
@@ -274,7 +359,9 @@ DATASETS: dict[str, Dataset] = {
         module="tw_stock_cli.crawlers.taifex.fcm_futures_volume_day",
         kind="none",
         returns=("期貨商代號", "名稱", "小計"),
-        source_urls=("https://www.taifex.com.tw/cht/7/getFCMFile?filename=Daily_FUT_day.csv",),
+        source_urls=(
+            "https://www.taifex.com.tw/cht/7/getFCMFile?filename=Daily_FUT_day.csv",
+        ),
     ),
     "taifex.fcm-futures-volume-night": Dataset(
         id="taifex.fcm-futures-volume-night",
@@ -284,7 +371,9 @@ DATASETS: dict[str, Dataset] = {
         module="tw_stock_cli.crawlers.taifex.fcm_futures_volume_night",
         kind="none",
         returns=("期貨商代號", "名稱", "總計", "市佔率"),
-        source_urls=("https://www.taifex.com.tw/cht/7/getFCMFile?filename=Daily_FUT_night.csv",),
+        source_urls=(
+            "https://www.taifex.com.tw/cht/7/getFCMFile?filename=Daily_FUT_night.csv",
+        ),
     ),
     "taifex.fcm-options-volume-day": Dataset(
         id="taifex.fcm-options-volume-day",
@@ -294,7 +383,9 @@ DATASETS: dict[str, Dataset] = {
         module="tw_stock_cli.crawlers.taifex.fcm_options_volume_day",
         kind="none",
         returns=("期貨商代號", "名稱", "總計", "市佔率"),
-        source_urls=("https://www.taifex.com.tw/cht/7/getFCMFile?filename=Daily_OPT_day.csv",),
+        source_urls=(
+            "https://www.taifex.com.tw/cht/7/getFCMFile?filename=Daily_OPT_day.csv",
+        ),
     ),
     "taifex.fcm-options-volume-night": Dataset(
         id="taifex.fcm-options-volume-night",
@@ -304,7 +395,9 @@ DATASETS: dict[str, Dataset] = {
         module="tw_stock_cli.crawlers.taifex.fcm_options_volume_night",
         kind="none",
         returns=("期貨商代號", "名稱", "總計", "市佔率"),
-        source_urls=("https://www.taifex.com.tw/cht/7/getFCMFile?filename=Daily_OPT_night.csv",),
+        source_urls=(
+            "https://www.taifex.com.tw/cht/7/getFCMFile?filename=Daily_OPT_night.csv",
+        ),
     ),
     "mops.month-revenue": Dataset(
         id="mops.month-revenue",

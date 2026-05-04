@@ -1,12 +1,12 @@
 """Fetch TPEx OTC securities daily open, high, low, and close quotes."""
 
 import datetime
-import json
-import typing
+from typing import Any
 
 import pandas as pd
 import requests
 
+from tw_stock_cli.crawlers.common import roc_date
 from tw_stock_cli.crawlers.common import table_dataframe
 
 URL = "https://www.tpex.org.tw/web/stock/aftertrading/otc_quotes_no1430/stk_wn1430_result.php?l=zh-tw&d={}&se=AL&_={}"
@@ -30,36 +30,30 @@ HEADER = {
 }
 
 
-def crawler(parameters:typing.Dict[str, str]):
-    crawler_date = parameters.get("crawler_date", "")
-    crawler_date = crawler_date.replace(
-        crawler_date.split("-")[0],
-        str(int(crawler_date.split("-")[0]) - 1911)
-    )
-    crawler_date = crawler_date.replace("-", "/")
+COLNAMES = [
+    "stock_id",
+    "stock_name",
+    "close",
+    "open",
+    "max",
+    "min",
+]
+SOURCE_COLUMNS = ["代號", "名稱", "收盤 ", "開盤 ", "最高 ", "最低"]
+
+
+def crawler(parameters: dict[str, Any]) -> pd.DataFrame:
+    query_date = roc_date(str(parameters.get("crawler_date", "")))
     crawler_timestamp = int(datetime.datetime.now().timestamp())
 
-    resp = requests.get(
-        url=URL.format(crawler_date, crawler_timestamp), headers=HEADER
-    )
-    columns = [
-        "stock_id",
-        "stock_name",
-        "close",
-        "open",
-        "max",
-        "min",
-    ]
-    if resp.ok:
-        resp_data = resp.json()
-        data = table_dataframe(resp_data)
-        if data.empty:
-            return pd.DataFrame()
-        data = data[["代號", "名稱", "收盤 ", "開盤 ", "最高 ", "最低"]]
-        data.columns = columns
-        data["date"] = parameters.get("crawler_date", "")
-    else:
-        data = pd.DataFrame()
+    resp = requests.get(url=URL.format(query_date, crawler_timestamp), headers=HEADER)
+    if not resp.ok:
+        return pd.DataFrame()
+    data = table_dataframe(resp.json())
+    if data.empty:
+        return pd.DataFrame()
+    data = data[SOURCE_COLUMNS].copy()
+    data.columns = COLNAMES
+    data["date"] = parameters.get("crawler_date", "")
     return data
 
 

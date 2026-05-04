@@ -1,7 +1,7 @@
 """Shared HTTP and DataFrame helpers for exchange crawler modules."""
 
 import io
-import typing
+from typing import Any, Optional, Sequence
 
 import pandas as pd
 import requests
@@ -15,6 +15,11 @@ DEFAULT_HEADERS = {
 }
 
 
+def compact_date(date: str) -> str:
+    """Convert an ISO-like date to YYYYMMDD."""
+    return date.replace("-", "")
+
+
 def roc_date(date: str) -> str:
     """Convert an ISO-like AD date to the ROC date format used by some sources."""
     parts = date.replace("-", "/").split("/")
@@ -24,9 +29,9 @@ def roc_date(date: str) -> str:
 
 def get_json(
     url: str,
-    headers: typing.Optional[typing.Dict[str, str]] = None,
+    headers: Optional[dict[str, str]] = None,
     timeout: int = 30,
-) -> typing.Dict[str, typing.Any]:
+) -> dict[str, Any]:
     """Fetch JSON with exchange-friendly default headers."""
     merged_headers = dict(DEFAULT_HEADERS)
     if headers:
@@ -38,8 +43,8 @@ def get_json(
 
 def post(
     url: str,
-    data: typing.Dict[str, typing.Any],
-    headers: typing.Optional[typing.Dict[str, str]] = None,
+    data: dict[str, Any],
+    headers: Optional[dict[str, str]] = None,
     timeout: int = 30,
 ) -> requests.Response:
     """POST form data with exchange-friendly default headers."""
@@ -52,9 +57,9 @@ def post(
 
 
 def table_dataframe(
-    payload: typing.Dict[str, typing.Any],
+    payload: dict[str, Any],
     table_index: int = 0,
-    columns: typing.Optional[typing.Sequence[str]] = None,
+    columns: Optional[Sequence[str]] = None,
 ) -> pd.DataFrame:
     """Convert the common TWSE/TPEx JSON table shape into a DataFrame."""
     if "tables" in payload:
@@ -74,9 +79,9 @@ def table_dataframe(
 
 
 def table_dataframe_by_field(
-    payload: typing.Dict[str, typing.Any],
+    payload: dict[str, Any],
     field_name: str,
-    columns: typing.Optional[typing.Sequence[str]] = None,
+    columns: Optional[Sequence[str]] = None,
 ) -> pd.DataFrame:
     """Return the first JSON table whose field list contains the requested field."""
     for table in payload.get("tables", []):
@@ -87,7 +92,7 @@ def table_dataframe_by_field(
     return pd.DataFrame()
 
 
-def html_tables(html: str) -> typing.List[pd.DataFrame]:
+def html_tables(html: str) -> list[pd.DataFrame]:
     """Parse HTML tables and normalize source error pages to an empty result."""
     if not html or "PAGE CANNOT BE ACCESSED" in html or "頁面無法執行" in html:
         return []
