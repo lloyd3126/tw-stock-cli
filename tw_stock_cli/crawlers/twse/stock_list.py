@@ -7,7 +7,7 @@ import requests
 from loguru import logger
 from lxml import etree
 
-from crawler_common import get_json, table_dataframe_by_field
+from tw_stock_cli.crawlers.common import get_json, table_dataframe_by_field
 
 
 def header():

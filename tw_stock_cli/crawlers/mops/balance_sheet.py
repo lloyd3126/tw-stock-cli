@@ -5,7 +5,7 @@ import requests
 
 import pandas as pd
 from loguru import logger
-from crawler_common import html_tables
+from tw_stock_cli.crawlers.common import html_tables
 
 
 def header():

@@ -6,7 +6,7 @@ import typing
 import pandas as pd
 import requests
 from loguru import logger
-from crawler_common import table_dataframe
+from tw_stock_cli.crawlers.common import table_dataframe
 
 
 def header():

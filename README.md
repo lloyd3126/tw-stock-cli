@@ -46,14 +46,21 @@ uv run tw-stock list-datasets --group mops
 
 ## Source Layout
 
-Crawler module names follow the source and dataset topic:
+Crawler modules live under `tw_stock_cli/crawlers` and are grouped by data source:
 
-- `twse_*`: TWSE listed market datasets
-- `tpex_*`: TPEx OTC market datasets
-- `taifex_*`: TAIFEX futures and options datasets
-- `mops_*`: MOPS financial disclosure datasets
-- `crawler_common.py`: shared HTTP and DataFrame helpers
-- `tw_stock_cli/registry.py`: dataset catalog and crawler dispatch
+```text
+tw_stock_cli/
+  cli.py                  # CLI commands and output formatting
+  registry.py             # dataset catalog and crawler dispatch
+  crawlers/
+    common.py             # shared HTTP and DataFrame helpers
+    twse/                 # TWSE listed-market datasets
+    tpex/                 # TPEx OTC-market datasets
+    taifex/               # TAIFEX futures and options datasets
+    mops/                 # MOPS financial disclosure datasets
+```
+
+Inside each source folder, module names describe the dataset topic, such as `stock_price.py`, `institutional_trade.py`, or `month_revenue.py`.
 
 ## Notes
 

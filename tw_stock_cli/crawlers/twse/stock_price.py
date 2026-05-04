@@ -1,4 +1,4 @@
-"""Fetch TPEx OTC securities daily open, high, low, and close quotes."""
+"""Fetch TWSE listed securities daily open, high, low, and close quotes."""
 
 import datetime
 import json
@@ -7,18 +7,17 @@ import typing
 import pandas as pd
 import requests
 
-from crawler_common import table_dataframe
+from tw_stock_cli.crawlers.common import table_dataframe_by_field
 
-URL = "https://www.tpex.org.tw/web/stock/aftertrading/otc_quotes_no1430/stk_wn1430_result.php?l=zh-tw&d={}&se=AL&_={}"
-
-# TPEx quote endpoints expect browser-like request headers.
+URL = "https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?response=json&date={}&type=ALLBUT0999&_={}"
+# TWSE after-trading endpoints expect browser-like request headers.
 HEADER = {
     "Accept": "application/json, text/javascript, */*; q=0.01",
     "Accept-Encoding": "gzip, deflate, br",
     "Accept-Language": "zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7",
     "Connection": "keep-alive",
-    "Host": "www.tpex.org.tw",
-    "Referer": "https://www.tpex.org.tw/web/stock/aftertrading/otc_quotes_no1430/stk_wn1430.php?l=zh-tw",
+    "Host": "www.twse.com.tw",
+    "Referer": "https://www.twse.com.tw/zh/page/trading/exchange/MI_INDEX.html",
     "sec-ch-ua": '" Not;A Brand";v="99", "Google Chrome";v="97", "Chromium";v="97"',
     "sec-ch-ua-mobile": "?0",
     "sec-ch-ua-platform": "Windows",
@@ -30,13 +29,9 @@ HEADER = {
 }
 
 
-def crawler(parameters:typing.Dict[str, str]):
+def crawler(parameters:typing.Dict[str, str]) -> pd.DataFrame:
     crawler_date = parameters.get("crawler_date", "")
-    crawler_date = crawler_date.replace(
-        crawler_date.split("-")[0],
-        str(int(crawler_date.split("-")[0]) - 1911)
-    )
-    crawler_date = crawler_date.replace("-", "/")
+    crawler_date = crawler_date.replace("-", "")
     crawler_timestamp = int(datetime.datetime.now().timestamp())
 
     resp = requests.get(
@@ -45,17 +40,17 @@ def crawler(parameters:typing.Dict[str, str]):
     columns = [
         "stock_id",
         "stock_name",
-        "close",
         "open",
         "max",
         "min",
+        "close",
     ]
     if resp.ok:
         resp_data = resp.json()
-        data = table_dataframe(resp_data)
+        data = table_dataframe_by_field(resp_data, "證券代號")
         if data.empty:
             return pd.DataFrame()
-        data = data[["代號", "名稱", "收盤 ", "開盤 ", "最高 ", "最低"]]
+        data = data[["證券代號", "證券名稱", "開盤價", "最高價", "最低價", "收盤價"]]
         data.columns = columns
         data["date"] = parameters.get("crawler_date", "")
     else:

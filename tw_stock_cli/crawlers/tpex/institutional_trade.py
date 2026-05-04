@@ -10,7 +10,7 @@ from dateutil.relativedelta import relativedelta
 from loguru import logger
 from tqdm import tqdm
 
-from crawler_common import table_dataframe
+from tw_stock_cli.crawlers.common import table_dataframe
 
 
 def header():
