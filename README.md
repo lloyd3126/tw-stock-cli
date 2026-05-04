@@ -62,6 +62,20 @@ tw_stock_cli/
 
 Inside each source folder, module names describe the dataset topic, such as `stock_price.py`, `institutional_trade.py`, or `month_revenue.py`.
 
+## Testing
+
+Run the fast test suite without live exchange requests:
+
+```sh
+uv run pytest
+```
+
+Live smoke tests are skipped by default because exchange endpoints can be slow or temporarily unavailable. Run them explicitly when you want to verify current source availability:
+
+```sh
+TW_STOCK_LIVE_TESTS=1 uv run pytest tests/test_live_smoke.py
+```
+
 ## Notes
 
 Exchange endpoints can change response shapes. For reliable workflows, run `validate` before building reports or exports that users rely on.
