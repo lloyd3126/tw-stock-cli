@@ -137,6 +137,10 @@ def add_dataset_args(parser: argparse.ArgumentParser) -> None:
         "--industry-code",
         help="MOPS industry code for company basic information datasets.",
     )
+    parser.add_argument(
+        "--committee",
+        help="MOPS functional committee code. Default: 4 (remuneration committee).",
+    )
     parser.add_argument("--seq-no", help="MOPS material information detail sequence.")
     parser.add_argument(
         "--spoke-date",
@@ -162,7 +166,7 @@ def add_dataset_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "--market",
         default="sii",
-        choices=["sii", "otc", "rotc", "pub"],
+        choices=["sii", "otc", "rotc", "pub", "all"],
         help="MOPS market/type. Default: sii.",
     )
     parser.add_argument(
@@ -254,6 +258,7 @@ def params_from_args(args: argparse.Namespace) -> dict[str, Any]:
         "date": args.date,
         "stock_id": getattr(args, "stock_id", None),
         "industry_code": getattr(args, "industry_code", None),
+        "committee": getattr(args, "committee", None),
         "seq_no": getattr(args, "seq_no", None),
         "spoke_date": getattr(args, "spoke_date", None),
         "spoke_time": getattr(args, "spoke_time", None),
@@ -448,6 +453,37 @@ def required_params(dataset: Dataset) -> str:
         return "stock_id, year"
     if dataset.kind == "mops-treasury-stock-buyback":
         return "stock_id"
+    if dataset.kind == "mops-director-supervisor-remuneration":
+        return "year"
+    if dataset.kind in {
+        "mops-financial-report-electronic-book",
+        "mops-annual-report-electronic-book",
+        "mops-related-company-reports",
+    }:
+        return "stock_id, year"
+    if dataset.kind == "mops-sustainability-report":
+        return "year"
+    if dataset.kind == "mops-major-shareholder-relationship":
+        return "year"
+    if dataset.kind in {
+        "mops-employee-benefit-expense",
+        "mops-full-time-employee-salary",
+    }:
+        return "year"
+    if dataset.kind == "mops-board-attendance-training":
+        return "stock_id"
+    if dataset.kind == "mops-related-party-transaction-difference":
+        return "stock_id, year, quarter"
+    if dataset.kind in {
+        "mops-manager-compensation-distribution",
+        "mops-shareholding-distribution",
+    }:
+        return "stock_id, year"
+    if dataset.kind in {
+        "mops-employee-welfare-policy",
+        "mops-esg-company-disclosure",
+    }:
+        return "stock_id, year"
     if dataset.kind in {
         "mops-asset-acquisition-disposal",
         "mops-asset-acquisition-disposal-financial",
@@ -498,6 +534,39 @@ def optional_params(dataset: Dataset) -> list[str]:
         return ["market"]
     if dataset.kind == "mops-private-placement":
         return ["market", "stock_id"]
+    if dataset.kind in {
+        "mops-director-supervisor-remuneration",
+        "mops-financial-report-electronic-book",
+        "mops-annual-report-electronic-book",
+        "mops-related-company-reports",
+        "mops-manager-compensation-distribution",
+        "mops-related-party-transaction-difference",
+        "mops-shareholding-distribution",
+    }:
+        return ["market"]
+    if dataset.kind == "mops-company-governance-structure":
+        return ["market", "stock_id"]
+    if dataset.kind == "mops-sustainability-report":
+        return ["market", "stock_id"]
+    if dataset.kind == "mops-major-shareholder-relationship":
+        return ["market", "stock_id"]
+    if dataset.kind in {
+        "mops-employee-benefit-expense",
+        "mops-full-time-employee-salary",
+    }:
+        return ["market", "industry_code"]
+    if dataset.kind in {
+        "mops-employee-welfare-policy",
+        "mops-esg-company-disclosure",
+    }:
+        return ["market"]
+    if dataset.kind in {
+        "mops-independent-director-profile",
+        "mops-board-attendance-training",
+    }:
+        return ["market"]
+    if dataset.kind == "mops-functional-committee":
+        return ["market", "committee"]
     if dataset.kind in {
         "mops-asset-acquisition-disposal",
         "mops-asset-acquisition-disposal-financial",

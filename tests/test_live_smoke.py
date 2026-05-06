@@ -100,6 +100,58 @@ pytestmark = pytest.mark.skipif(
             "mops.related-party-transaction",
             {"stock_id": "8011", "year": 113, "month": 9, "market": "sii"},
         ),
+        ("mops.director-supervisor-remuneration", {"year": 113, "market": "sii"}),
+        (
+            "mops.financial-report-electronic-book",
+            {"stock_id": "2395", "year": 113, "market": "all"},
+        ),
+        (
+            "mops.annual-report-electronic-book",
+            {"stock_id": "2395", "year": 113, "market": "all"},
+        ),
+        (
+            "mops.related-company-reports",
+            {"stock_id": "2395", "year": 113, "market": "all"},
+        ),
+        (
+            "mops.major-shareholder-relationship",
+            {"stock_id": "2395", "year": 113, "market": "sii"},
+        ),
+        ("mops.employee-benefit-expense", {"year": 113, "market": "sii"}),
+        (
+            "mops.employee-welfare-policy",
+            {"stock_id": "2395", "year": 114, "market": "all"},
+        ),
+        (
+            "mops.esg-company-disclosure",
+            {"stock_id": "2395", "year": 113, "market": "sii"},
+        ),
+        ("mops.full-time-employee-salary", {"year": 113, "market": "sii"}),
+        ("mops.independent-director-profile", {"market": "sii"}),
+        (
+            "mops.board-attendance-training",
+            {"stock_id": "2395", "market": "sii"},
+        ),
+        (
+            "mops.functional-committee",
+            {"market": "sii", "committee": "4"},
+        ),
+        (
+            "mops.company-governance-structure",
+            {"stock_id": "2395", "market": "sii"},
+        ),
+        (
+            "mops.sustainability-report",
+            {"stock_id": "2395", "year": 2024, "market": "sii"},
+        ),
+        (
+            "mops.manager-compensation-distribution",
+            {"stock_id": "2395", "year": 113, "market": "sii"},
+        ),
+        (
+            "mops.shareholding-distribution",
+            {"stock_id": "2395", "year": 113, "market": "sii"},
+        ),
         ("mops.investor-conference", {"stock_id": "2395", "year": 114, "market": "sii"}),
         ("mops.material-info", {"stock_id": "2395", "year": 114}),
         (

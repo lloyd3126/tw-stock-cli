@@ -7,7 +7,7 @@
 - TWSE 上市股票每日價格、股票清單、本益比/殖利率/PBR、三大法人買賣超、融資融券、外資持股與報酬指數資料。
 - TPEx 上櫃股票每日價格、股票清單、本益比/殖利率/PBR、三大法人買賣超、融資融券、外資持股與指數資料。
 - TAIFEX 期貨與選擇權日行情、逐筆成交、三大法人部位與期貨商成交量。
-- MOPS 月營收、彙總三表、單一公司詳細四表、公司基本資料、股利分派、除權息公告、庫藏股、私募、取得或處分資產、資金貸與、背書保證、關係人交易、法說會、股東會、重大訊息、內部人股權異動、持股餘額、轉讓申報與質權設定資料。
+- MOPS 月營收、彙總三表、單一公司詳細四表、公司基本資料、財報/年報/關係企業三書表電子書、主要股東關係、永續報告書、企業 ESG 資訊揭露、員工薪資福利、員工福利政策、董事會治理、公司治理組織架構、功能性委員會、股利分派、除權息公告、庫藏股、私募、取得或處分資產、資金貸與、背書保證、關係人交易、董監事酬金、經理人酬勞、股權分散、法說會、股東會、重大訊息、內部人股權異動、持股餘額、轉讓申報與質權設定資料。
 
 ## 需求
 
@@ -33,6 +33,23 @@ uv run tw-stock fetch mops.asset-acquisition-disposal-financial --stock-id 8011 
 uv run tw-stock fetch mops.fund-lending --stock-id 1101 --year 2025 --month 3 --market sii --limit 5 --format json
 uv run tw-stock fetch mops.endorsement-guarantee --stock-id 1101 --year 2025 --month 3 --market sii --limit 5 --format json
 uv run tw-stock fetch mops.related-party-transaction --stock-id 8011 --year 2024 --month 9 --market sii --limit 5 --format json
+uv run tw-stock fetch mops.related-party-transaction-difference --stock-id 3162 --year 2025 --quarter 1 --market otc --format json
+uv run tw-stock fetch mops.director-supervisor-remuneration --year 2024 --market sii --limit 5 --format json
+uv run tw-stock fetch mops.financial-report-electronic-book --stock-id 2395 --year 2024 --market all --format json
+uv run tw-stock fetch mops.annual-report-electronic-book --stock-id 2395 --year 2024 --market all --format json
+uv run tw-stock fetch mops.related-company-reports --stock-id 2395 --year 2024 --market all --format json
+uv run tw-stock fetch mops.major-shareholder-relationship --stock-id 2395 --year 2024 --market sii --format json
+uv run tw-stock fetch mops.sustainability-report --stock-id 2395 --year 2024 --market sii --format json
+uv run tw-stock fetch mops.employee-benefit-expense --year 2024 --market sii --limit 5 --format json
+uv run tw-stock fetch mops.employee-welfare-policy --stock-id 2395 --year 2025 --market all --format json
+uv run tw-stock fetch mops.esg-company-disclosure --stock-id 2395 --year 2024 --market sii --format json
+uv run tw-stock fetch mops.full-time-employee-salary --year 2024 --market sii --limit 5 --format json
+uv run tw-stock fetch mops.independent-director-profile --market sii --limit 5 --format json
+uv run tw-stock fetch mops.board-attendance-training --stock-id 2395 --market sii --format json
+uv run tw-stock fetch mops.functional-committee --market sii --committee 4 --limit 5 --format json
+uv run tw-stock fetch mops.company-governance-structure --stock-id 2395 --market sii --format json
+uv run tw-stock fetch mops.manager-compensation-distribution --stock-id 2395 --year 2024 --market sii --format json
+uv run tw-stock fetch mops.shareholding-distribution --stock-id 2395 --year 2024 --market sii --format json
 uv run tw-stock fetch mops.dividend-distribution --stock-id 2395 --year 2025 --format json
 uv run tw-stock fetch mops.ex-dividend-announcement --stock-id 2395 --year 2025 --market sii --format json
 uv run tw-stock fetch mops.investor-conference --stock-id 2395 --year 2025 --market sii --format jsonl

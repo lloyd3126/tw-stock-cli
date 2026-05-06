@@ -11,10 +11,11 @@
 - `month`：月份，適用於 MOPS 月營收、公告清單與內部人月彙總資料。
 - `start_month`, `end_month`：MOPS 月份區間，適用於內部人轉讓申報資料；若提供 `month`，會查單月。
 - `quarter`：季度，值為 `1` 到 `4`。
-- `market`：MOPS 市場別，預設 `sii`；可用值為 `sii`、`otc`、`rotc`、`pub`。
+- `market`：MOPS 市場別，預設 `sii`；可用值為 `sii`、`otc`、`rotc`、`pub`、`all`。
 - `industry_code`：MOPS 產業別代碼，適用於部分公司清單類查詢。
 - `foreign`：MOPS 月營收外國公司旗標，預設 `0`。
 - `stock_id`：公司股票代號，適用於 MOPS 單一公司詳細財報與公司公告類資料。
+- `committee`：MOPS 功能性委員會代碼，預設 `4` 薪資報酬委員會；`6` 使用強制設置審計委員會端點。
 
 ## TWSE 上市資料
 
@@ -586,6 +587,261 @@ uv run tw-stock fetch mops.related-party-transaction --stock-id 8011 --year 2024
 - 主要欄位：`stock_id`, `stock_name`, `report_year`, `report_month`, `transaction_type`, `related_party_name`, `asset_item`, `current_month_amount`, `current_month_ratio`, `ytd_amount`, `ytd_ratio`
 - 常見用途：追蹤關係人銷進貨、往來款、資產交易與合併報表占比，建立關係人交易監控資料。
 
+### `mops.related-party-transaction-difference` - 關係人交易查核核閱差異說明
+
+抓取公開資訊觀測站單一公司季度關係人交易「申報數」與會計師查核（核閱）數差異說明。此揭露只有在公司達差異門檻時才會有資料，沒有差異時來源通常回空表。
+
+- 必填參數：`stock_id`, `year`, `quarter`
+- 選填參數：`market`
+- 範例：
+
+```sh
+uv run tw-stock fetch mops.related-party-transaction-difference --stock-id 3162 --year 2025 --quarter 1 --market otc --format json
+```
+
+- 主要欄位：`stock_id`, `stock_name`, `report_year`, `quarter`, `transaction_type`, `reported_amount`, `audited_reviewed_amount`, `difference_amount`, `difference_ratio`, `difference_reason`, `countermeasure`
+- 常見用途：補強關係人交易申報資料，追蹤自結/申報數與會計師查核或核閱數差異及原因。
+
+### `mops.director-supervisor-remuneration` - 董監事酬金相關資訊
+
+抓取公開資訊觀測站年度董監事酬金彙總。來源會先產生 Big5 靜態報表，CLI 會自動跟進並整理酬金總額、加計兼任員工酬金、平均每位酬金、稅後損益、EPS、ROE 與合理性說明。
+
+- 必填參數：`year`
+- 選填參數：`market`
+- 範例：
+
+```sh
+uv run tw-stock fetch mops.director-supervisor-remuneration --year 2024 --market sii --limit 5 --format json
+```
+
+- 主要欄位：`market`, `report_year`, `report_type`, `role`, `industry`, `stock_id`, `stock_name`, `base_remuneration_total`, `with_employee_salary_total`, `base_remuneration_profit_ratio`, `average_base_remuneration`, `after_tax_profit_loss`, `eps`, `roe`, `reasonableness_explanation`
+- 常見用途：分析董監事酬金與公司獲利、ROE、EPS 的關係，建立治理與薪酬風險指標。
+
+### `mops.financial-report-electronic-book` - 財務報告電子書 metadata
+
+抓取公開資訊觀測站單一公司的財務報告電子書 metadata。此資料集回傳 PDF 檔名、檔案大小、上傳日期與 doc.twse 下載請求 URL，不解析 PDF 內容。
+
+- 必填參數：`stock_id`, `year`
+- 選填參數：`market`
+- 範例：
+
+```sh
+uv run tw-stock fetch mops.financial-report-electronic-book --stock-id 2395 --year 2024 --market all --format json
+```
+
+- 主要欄位：`stock_id`, `document_year`, `document_type`, `detail_type`, `detail_description`, `filename`, `file_size`, `upload_datetime`, `download_request_url`
+- 常見用途：盤點財報 PDF、建立下載清單、追蹤補正或上傳時間。
+
+### `mops.annual-report-electronic-book` - 年報與股東會電子書 metadata
+
+抓取公開資訊觀測站單一公司的年報、股東會與永續相關電子書 metadata。適合先取得年報 PDF 檔案資訊，再交給後續 PDF parser。
+
+- 必填參數：`stock_id`, `year`
+- 選填參數：`market`
+- 範例：
+
+```sh
+uv run tw-stock fetch mops.annual-report-electronic-book --stock-id 2395 --year 2024 --market all --format json
+```
+
+- 主要欄位：`stock_id`, `document_year`, `document_type`, `detail_type`, `meeting_type`, `detail_description`, `filename`, `upload_datetime`, `download_request_url`
+- 常見用途：年報下載清單、股東會資料歸檔、永續專章檔案追蹤。
+
+### `mops.related-company-reports` - 關係企業三書表電子書 metadata
+
+抓取公開資訊觀測站單一公司的關係企業三書表電子書 metadata。此資料集回傳電子檔名、上傳時間與 doc.twse 下載請求 URL，不解析 PDF 內容。
+
+- 必填參數：`stock_id`, `year`
+- 選填參數：`market`
+- 範例：
+
+```sh
+uv run tw-stock fetch mops.related-company-reports --stock-id 2395 --year 2024 --market all --format json
+```
+
+- 主要欄位：`stock_id`, `document_year`, `document_type`, `detail_type`, `detail_description`, `filename`, `file_size`, `upload_datetime`, `download_request_url`
+- 常見用途：關係企業報告書下載清單、集團關係文件盤點、PDF 後續處理入口。
+
+### `mops.major-shareholder-relationship` - 年報前十大股東相互間關係 metadata
+
+抓取公開資訊觀測站「年報前十大股東相互間關係」清單。來源細節是 PDF，CLI 目前回傳公司、股東會日期、PDF 檔名與下載請求 URL。
+
+- 必填參數：`year`
+- 選填參數：`market`, `stock_id`
+- 範例：
+
+```sh
+uv run tw-stock fetch mops.major-shareholder-relationship --stock-id 2395 --year 2024 --market sii --format json
+```
+
+- 主要欄位：`market`, `report_year`, `stock_id`, `stock_name`, `shareholder_meeting_date`, `detail_available`, `filename`, `download_request_url`
+- 常見用途：主要股東關係 PDF 盤點、關係人治理資料索引、年報附表下載清單。
+
+### `mops.sustainability-report` - 永續報告書 metadata
+
+抓取 MOPS/ESGGen+ 永續報告書 metadata，包含永續報告書網站連結、中文/英文報告下載 URL、報告期間、準則與確信資訊。此資料集只回傳 metadata 與下載連結，不解析 PDF。
+
+- 必填參數：`year`
+- 選填參數：`market`, `stock_id`
+- 範例：
+
+```sh
+uv run tw-stock fetch mops.sustainability-report --stock-id 2395 --year 2024 --market sii --format json
+```
+
+- 主要欄位：`market`, `report_year`, `stock_id`, `stock_name`, `industry`, `reporting_interval`, `compliance_notes`, `assurance_provider`, `assurance_standard`, `tw_report_url`, `tw_report_download_url`, `en_report_url`, `en_report_download_url`
+- 常見用途：ESG 報告書下載清單、永續報告揭露盤點、確信資訊整理。
+
+### `mops.esg-company-disclosure` - 企業 ESG 資訊揭露個別公司查詢 metadata
+
+抓取公開資訊觀測站「企業 ESG 資訊揭露」個別公司查詢入口。MOPS 目前會將查詢結果跳轉到 ESGGen+，因此此資料集回傳該查詢 URL，不硬拆前端渲染的指標表。
+
+- 必填參數：`stock_id`, `year`
+- 選填參數：`market`
+- 範例：
+
+```sh
+uv run tw-stock fetch mops.esg-company-disclosure --stock-id 2395 --year 2024 --market sii --format json
+```
+
+- 主要欄位：`stock_id`, `mops_year`, `report_year`, `inquiry_url`
+- 常見用途：建立 ESGGen+ 個別公司揭露入口索引、與永續報告書 metadata 串接。
+
+### `mops.employee-benefit-expense` - 員工福利及薪資費用統計
+
+抓取公開資訊觀測站員工福利與薪資費用統計，包含員工人數、福利費用、薪資費用、平均薪資與同業平均。
+
+- 必填參數：`year`
+- 選填參數：`market`, `industry_code`
+- 範例：
+
+```sh
+uv run tw-stock fetch mops.employee-benefit-expense --year 2024 --market sii --limit 5 --format json
+```
+
+- 主要欄位：`market`, `report_year`, `industry`, `stock_id`, `stock_name`, `employee_benefit_expense_thousand`, `employee_salary_expense_thousand`, `employee_count`, `avg_employee_salary_expense_thousand`, `eps`
+- 常見用途：薪資福利比較、產業人均費用分析、ESG 社會面指標整理。
+
+### `mops.employee-welfare-policy` - 員工福利政策及權益維護措施
+
+抓取公開資訊觀測站單一公司的員工福利政策及權益維護措施揭露，保留長文字內容，並將平均調薪與新進員工起薪表攤平成 `section`/`item`/`value` 列。
+
+- 必填參數：`stock_id`, `year`
+- 選填參數：`market`
+- 範例：
+
+```sh
+uv run tw-stock fetch mops.employee-welfare-policy --stock-id 2395 --year 2025 --market all --format json
+```
+
+- 主要欄位：`stock_id`, `stock_name`, `report_year`, `disclosure_year`, `section`, `item`, `value`, `note`
+- 常見用途：員工福利政策文字索引、勞資糾紛揭露、薪資調整與起薪揭露盤點。
+
+### `mops.full-time-employee-salary` - 非擔任主管職務全時員工薪資統計
+
+抓取公開資訊觀測站非主管全時員工薪資統計，包含平均數、中位數、與前期變動比率。
+
+- 必填參數：`year`
+- 選填參數：`market`, `industry_code`
+- 範例：
+
+```sh
+uv run tw-stock fetch mops.full-time-employee-salary --year 2024 --market sii --limit 5 --format json
+```
+
+- 主要欄位：`market`, `report_year`, `industry`, `stock_id`, `stock_name`, `salary_total_thousand`, `employee_count_avg`, `salary_avg_thousand`, `salary_median_thousand`, `eps`
+- 常見用途：員工薪資中位數比較、薪資與 EPS 關係分析、ESG 社會面揭露整理。
+
+### `mops.independent-director-profile` - 獨立董事基本資料
+
+抓取公開資訊觀測站獨立董事基本資料彙總，包含職稱、姓名、就任日期、主要現職、主要經歷與兼任情形。
+
+- 必填參數：無
+- 選填參數：`market`
+- 範例：
+
+```sh
+uv run tw-stock fetch mops.independent-director-profile --market sii --limit 5 --format json
+```
+
+- 主要欄位：`market`, `sequence_no`, `stock_id`, `stock_name`, `role`, `person_name`, `appointment_date`, `current_positions`, `experience`
+- 常見用途：獨董名單盤點、兼任情形查核、治理資料庫建立。
+
+### `mops.board-attendance-training` - 董事會出席與進修情形
+
+抓取公開資訊觀測站單一公司的董事會出席與董事進修情形。輸出會以 `section` 區分 `board_attendance` 與 `director_training`。
+
+- 必填參數：`stock_id`
+- 選填參數：`market`
+- 範例：
+
+```sh
+uv run tw-stock fetch mops.board-attendance-training --stock-id 2395 --market sii --format json
+```
+
+- 主要欄位：`stock_id`, `stock_name`, `section`, `role`, `person_name`, `attendance_count`, `attendance_ratio`, `course_name`, `training_hours`, `annual_training_hours`
+- 常見用途：董事出席率檢查、董事進修紀錄整理、公司治理評估。
+
+### `mops.functional-committee` - 功能性委員會設置及成員
+
+抓取公開資訊觀測站功能性委員會設置與成員摘要。預設查薪資報酬委員會；可用 `--committee 6` 查強制設置審計委員會。
+
+- 必填參數：無
+- 選填參數：`market`, `committee`
+- 範例：
+
+```sh
+uv run tw-stock fetch mops.functional-committee --market sii --committee 4 --limit 5 --format json
+```
+
+- 主要欄位：`market`, `committee_code`, `committee_name`, `stock_id`, `stock_name`, `established_date`, `convener`, `members`, `operation_info`
+- 常見用途：功能性委員會設置率、委員名單盤點、審計/薪酬委員會治理資料整理。
+
+### `mops.company-governance-structure` - 公司治理組織架構
+
+抓取公開資訊觀測站「公司治理組織架構部分」資料，包含公司章程席次、董事任期、缺額情形、審計/薪資報酬委員會設置狀態、法律顧問與股東建議或糾紛處理窗口。
+
+- 必填參數：無
+- 選填參數：`market`, `stock_id`
+- 範例：
+
+```sh
+uv run tw-stock fetch mops.company-governance-structure --stock-id 2395 --market sii --format json
+```
+
+- 主要欄位：`market`, `stock_id`, `stock_name`, `articles_board_seats`, `articles_independent_director_seats`, `director_term_start`, `director_term_end`, `board_seats`, `independent_director_seats`, `audit_committee_status`, `remuneration_committee_status`, `legal_advisor`, `shareholder_service_contact`
+- 常見用途：董事會席次與委員會設置盤點、公司治理資料索引、法遵窗口整理。
+
+### `mops.manager-compensation-distribution` - 經理人員工酬勞分派情形
+
+抓取公開資訊觀測站單一公司分派員工酬勞之經理人姓名及分派情形彙總表，整理股票酬勞、現金酬勞、合計金額與占稅後純益比例。
+
+- 必填參數：`stock_id`, `year`
+- 選填參數：`market`
+- 範例：
+
+```sh
+uv run tw-stock fetch mops.manager-compensation-distribution --stock-id 2395 --year 2024 --market sii --format json
+```
+
+- 主要欄位：`stock_id`, `stock_name`, `compensation_year`, `distribution_year`, `stock_compensation_shares`, `stock_compensation_amount`, `cash_compensation_amount`, `total_compensation_amount`, `profit_ratio`
+- 常見用途：追蹤經理人分派員工酬勞，與公司章程、獲利與董監酬金資料交叉分析。
+
+### `mops.shareholding-distribution` - 股權分散表
+
+抓取公開資訊觀測站單一公司的股權分散表，包含持股分級與股東結構兩個區塊，並攤平成一列一個級距或結構類別。
+
+- 必填參數：`stock_id`, `year`
+- 選填參數：`market`
+- 範例：
+
+```sh
+uv run tw-stock fetch mops.shareholding-distribution --stock-id 2395 --year 2024 --market sii --format json
+```
+
+- 主要欄位：`stock_id`, `stock_name`, `query_year`, `data_date`, `section`, `bucket_or_category`, `holders`, `shares`, `holding_ratio`
+- 常見用途：觀察股權集中度、散戶/法人結構、持股級距分布，並補足內部人與主要股東持股之外的股權結構輪廓。
+
 ### `mops.dividend-distribution` - 公司股利分派情形
 
 抓取公開資訊觀測站單一公司指定年度的股利分派資料，包含董事會決議日、每股現金股利、資本公積發放、配股與公司章程中的股利政策文字。
@@ -630,8 +886,8 @@ uv run tw-stock fetch mops.investor-conference --stock-id 2395 --year 2025 --mar
 uv run tw-stock fetch mops.investor-conference --year 2025 --market sii --month 3 --format jsonl
 ```
 
-- 主要欄位：`stock_id`, `stock_name`, `conference_date`, `conference_time`, `location`, `summary`, `presentation_zh_file`, `presentation_en_file`, `company_ir_url`, `media_links`
-- 常見用途：建立法說會事件資料、追蹤簡報檔、公司 IR 頁面與影音連結。
+- 主要欄位：`stock_id`, `stock_name`, `conference_date`, `conference_time`, `location`, `summary`, `presentation_zh_file`, `presentation_en_file`, `presentation_zh_download_url`, `presentation_en_download_url`, `company_ir_url`, `media_links`
+- 常見用途：建立法說會事件資料、追蹤簡報檔下載連結、公司 IR 頁面與影音連結。
 
 ### `mops.shareholder-meeting` - 股東會日期地點及電子投票
 

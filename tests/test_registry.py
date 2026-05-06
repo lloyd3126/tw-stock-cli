@@ -12,7 +12,7 @@ from tw_stock_cli.registry import require
 
 
 def test_dataset_catalog_contains_expected_public_datasets() -> None:
-    assert len(DATASETS) == 55
+    assert len(DATASETS) == 72
     assert set(DATASETS) >= {
         "twse.stock-price",
         "tpex.stock-price",
@@ -23,12 +23,23 @@ def test_dataset_catalog_contains_expected_public_datasets() -> None:
         "mops.company-cash-flow",
         "mops.company-equity-changes",
         "mops.company-basic-info",
+        "mops.company-governance-structure",
         "mops.asset-acquisition-disposal",
         "mops.asset-acquisition-disposal-financial",
+        "mops.annual-report-electronic-book",
+        "mops.board-attendance-training",
+        "mops.director-supervisor-remuneration",
         "mops.dividend-distribution",
+        "mops.employee-benefit-expense",
+        "mops.employee-welfare-policy",
+        "mops.esg-company-disclosure",
         "mops.ex-dividend-announcement",
+        "mops.financial-report-electronic-book",
         "mops.endorsement-guarantee",
         "mops.fund-lending",
+        "mops.full-time-employee-salary",
+        "mops.functional-committee",
+        "mops.independent-director-profile",
         "mops.insider-holding-company-list",
         "mops.insider-holding-detail",
         "mops.insider-pledge-ratio-summary",
@@ -42,9 +53,15 @@ def test_dataset_catalog_contains_expected_public_datasets() -> None:
         "mops.investor-conference",
         "mops.material-info",
         "mops.material-info-detail",
+        "mops.major-shareholder-relationship",
+        "mops.manager-compensation-distribution",
         "mops.private-placement",
+        "mops.related-company-reports",
         "mops.related-party-transaction",
+        "mops.related-party-transaction-difference",
+        "mops.shareholding-distribution",
         "mops.shareholder-meeting",
+        "mops.sustainability-report",
         "mops.treasury-stock-buyback",
     }
 

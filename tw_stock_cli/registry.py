@@ -19,8 +19,19 @@ DatasetKind = Literal[
     "mops-basic-info",
     "mops-asset-acquisition-disposal",
     "mops-asset-acquisition-disposal-financial",
+    "mops-annual-report-electronic-book",
+    "mops-board-attendance-training",
+    "mops-company-governance-structure",
+    "mops-director-supervisor-remuneration",
+    "mops-employee-benefit-expense",
+    "mops-employee-welfare-policy",
     "mops-endorsement-guarantee",
+    "mops-esg-company-disclosure",
+    "mops-financial-report-electronic-book",
     "mops-fund-lending",
+    "mops-full-time-employee-salary",
+    "mops-functional-committee",
+    "mops-independent-director-profile",
     "mops-insider-holding-company-list",
     "mops-insider-holding-detail",
     "mops-insider-shareholding-detail",
@@ -33,9 +44,15 @@ DatasetKind = Literal[
     "mops-investor-conference",
     "mops-material-info",
     "mops-material-info-detail",
+    "mops-major-shareholder-relationship",
     "mops-private-placement",
+    "mops-manager-compensation-distribution",
+    "mops-related-party-transaction-difference",
     "mops-related-party-transaction",
+    "mops-related-company-reports",
+    "mops-shareholding-distribution",
     "mops-shareholder-meeting",
+    "mops-sustainability-report",
     "mops-treasury-stock-buyback",
 ]
 
@@ -151,6 +168,133 @@ class Dataset:
                     "kind": params.get("market", "all"),
                     "year": year,
                     "month": month,
+                }
+            )
+
+        if self.kind == "mops-related-party-transaction-difference":
+            year = normalize_roc_year(int(require(params, "year")))
+            quarter = int(require(params, "quarter"))
+            return module.crawler(
+                {
+                    "stock_id": str(require(params, "stock_id")),
+                    "kind": params.get("market", "sii"),
+                    "year": year,
+                    "quar": quarter,
+                }
+            )
+
+        if self.kind == "mops-director-supervisor-remuneration":
+            year = normalize_roc_year(int(require(params, "year")))
+            return module.crawler(
+                {
+                    "kind": params.get("market", "sii"),
+                    "year": year,
+                }
+            )
+
+        if self.kind in {
+            "mops-financial-report-electronic-book",
+            "mops-annual-report-electronic-book",
+            "mops-related-company-reports",
+        }:
+            year = normalize_roc_year(int(require(params, "year")))
+            return module.crawler(
+                {
+                    "stock_id": str(require(params, "stock_id")),
+                    "kind": params.get("market", "all"),
+                    "year": year,
+                }
+            )
+
+        if self.kind == "mops-company-governance-structure":
+            return module.crawler(
+                {
+                    "stock_id": params.get("stock_id"),
+                    "kind": params.get("market", "sii"),
+                }
+            )
+
+        if self.kind == "mops-sustainability-report":
+            return module.crawler(
+                {
+                    "stock_id": params.get("stock_id"),
+                    "kind": params.get("market", "sii"),
+                    "year": int(require(params, "year")),
+                }
+            )
+
+        if self.kind == "mops-major-shareholder-relationship":
+            year = normalize_roc_year(int(require(params, "year")))
+            return module.crawler(
+                {
+                    "stock_id": params.get("stock_id"),
+                    "kind": params.get("market", "sii"),
+                    "year": year,
+                }
+            )
+
+        if self.kind in {
+            "mops-employee-benefit-expense",
+            "mops-full-time-employee-salary",
+        }:
+            year = normalize_roc_year(int(require(params, "year")))
+            return module.crawler(
+                {
+                    "kind": params.get("market", "sii"),
+                    "year": year,
+                    "industry_code": params.get("industry_code"),
+                }
+            )
+
+        if self.kind == "mops-employee-welfare-policy":
+            year = normalize_roc_year(int(require(params, "year")))
+            return module.crawler(
+                {
+                    "stock_id": str(require(params, "stock_id")),
+                    "kind": params.get("market", "all"),
+                    "year": year,
+                }
+            )
+
+        if self.kind == "mops-esg-company-disclosure":
+            year = normalize_roc_year(int(require(params, "year")))
+            return module.crawler(
+                {
+                    "stock_id": str(require(params, "stock_id")),
+                    "kind": params.get("market", "sii"),
+                    "year": year,
+                }
+            )
+
+        if self.kind == "mops-independent-director-profile":
+            return module.crawler({"kind": params.get("market", "sii")})
+
+        if self.kind == "mops-board-attendance-training":
+            return module.crawler(
+                {
+                    "stock_id": str(require(params, "stock_id")),
+                    "kind": params.get("market", "sii"),
+                }
+            )
+
+        if self.kind == "mops-functional-committee":
+            return module.crawler(
+                {
+                    "kind": params.get("market", "sii"),
+                    "committee": params.get("committee", "4"),
+                }
+            )
+
+        if self.kind in {
+            "mops-manager-compensation-distribution",
+            "mops-shareholding-distribution",
+        }:
+            year = normalize_roc_year(int(require(params, "year")))
+            return module.crawler(
+                {
+                    "stock_id": str(require(params, "stock_id")),
+                    "kind": params.get("market", "all"),
+                    "year": year,
                 }
             )
 
@@ -968,6 +1112,397 @@ DATASETS: dict[str, Dataset] = {
         source_urls=("https://mopsov.twse.com.tw/mops/web/ajax_t141sb02",),
         notes="The crawler flattens each related-party section into one row per counterparty and transaction type.",
     ),
+    "mops.related-party-transaction-difference": Dataset(
+        id="mops.related-party-transaction-difference",
+        title="關係人交易查核核閱差異說明",
+        group="mops",
+        description="MOPS quarterly explanations for differences between related-party transaction filings and auditor audited/reviewed figures.",
+        module="tw_stock_cli.crawlers.mops.related_party_transaction_difference",
+        kind="mops-related-party-transaction-difference",
+        returns=(
+            "stock_id",
+            "stock_name",
+            "report_year",
+            "quarter",
+            "transaction_type",
+            "reported_amount",
+            "audited_reviewed_amount",
+            "difference_amount",
+            "difference_ratio",
+            "difference_reason",
+            "countermeasure",
+        ),
+        source_urls=("https://mopsov.twse.com.tw/mops/web/ajax_t141sb03",),
+        notes="This disclosure is sparse; companies without audit/review differences return an empty table.",
+    ),
+    "mops.director-supervisor-remuneration": Dataset(
+        id="mops.director-supervisor-remuneration",
+        title="董監事酬金相關資訊",
+        group="mops",
+        description="MOPS annual director/supervisor remuneration summary by market, including total remuneration, average remuneration, profit ratio, and reasonableness explanation.",
+        module="tw_stock_cli.crawlers.mops.director_supervisor_remuneration",
+        kind="mops-director-supervisor-remuneration",
+        returns=(
+            "market",
+            "report_year",
+            "report_type",
+            "role",
+            "industry",
+            "stock_id",
+            "stock_name",
+            "base_remuneration_total",
+            "with_employee_salary_total",
+            "base_remuneration_profit_ratio",
+            "average_base_remuneration",
+            "after_tax_profit_loss",
+            "eps",
+            "roe",
+            "reasonableness_explanation",
+        ),
+        source_urls=("https://mopsov.twse.com.tw/mops/web/ajax_t119sb04",),
+        notes="Defaults to company-level director remuneration sorted by stock ID; the source publishes a Big5 static report that the crawler follows.",
+    ),
+    "mops.financial-report-electronic-book": Dataset(
+        id="mops.financial-report-electronic-book",
+        title="財務報告電子書 metadata",
+        group="mops",
+        description="MOPS financial report electronic book metadata for a single company and year, including filenames and download request URLs.",
+        module="tw_stock_cli.crawlers.mops.financial_report_electronic_book",
+        kind="mops-financial-report-electronic-book",
+        returns=(
+            "stock_id",
+            "document_year",
+            "document_type",
+            "detail_type",
+            "detail_description",
+            "filename",
+            "file_size",
+            "upload_datetime",
+            "download_request_url",
+        ),
+        source_urls=(
+            "https://mopsov.twse.com.tw/mops/web/ajax_t57sb01_q1",
+            "https://doc.twse.com.tw/server-java/t57sb01",
+        ),
+        notes="Returns electronic book metadata and the doc.twse download request URL; it does not parse PDF contents.",
+    ),
+    "mops.annual-report-electronic-book": Dataset(
+        id="mops.annual-report-electronic-book",
+        title="年報與股東會電子書 metadata",
+        group="mops",
+        description="MOPS annual report, shareholder meeting, and sustainability electronic book metadata for a single company and year.",
+        module="tw_stock_cli.crawlers.mops.annual_report_electronic_book",
+        kind="mops-annual-report-electronic-book",
+        returns=(
+            "stock_id",
+            "document_year",
+            "document_type",
+            "detail_type",
+            "meeting_type",
+            "detail_description",
+            "filename",
+            "file_size",
+            "upload_datetime",
+            "download_request_url",
+        ),
+        source_urls=(
+            "https://mopsov.twse.com.tw/mops/web/ajax_t57sb01_q5",
+            "https://doc.twse.com.tw/server-java/t57sb01",
+        ),
+        notes="Returns electronic book metadata and the doc.twse download request URL; it does not parse PDF contents.",
+    ),
+    "mops.related-company-reports": Dataset(
+        id="mops.related-company-reports",
+        title="關係企業三書表電子書 metadata",
+        group="mops",
+        description="MOPS affiliated enterprise report electronic book metadata for a single company and year, including filenames and download request URLs.",
+        module="tw_stock_cli.crawlers.mops.related_company_reports_electronic_book",
+        kind="mops-related-company-reports",
+        returns=(
+            "stock_id",
+            "document_year",
+            "document_type",
+            "detail_type",
+            "detail_description",
+            "filename",
+            "file_size",
+            "upload_datetime",
+            "download_request_url",
+        ),
+        source_urls=(
+            "https://mopsov.twse.com.tw/mops/web/ajax_t57sb01_q10",
+            "https://doc.twse.com.tw/server-java/t57sb01",
+        ),
+        notes="Returns electronic book metadata and the doc.twse download request URL; it does not parse PDF contents.",
+    ),
+    "mops.major-shareholder-relationship": Dataset(
+        id="mops.major-shareholder-relationship",
+        title="年報前十大股東相互間關係 metadata",
+        group="mops",
+        description="MOPS annual report top-ten shareholder relationship metadata by year and market, with optional company filter.",
+        module="tw_stock_cli.crawlers.mops.major_shareholder_relationship",
+        kind="mops-major-shareholder-relationship",
+        returns=(
+            "market",
+            "report_year",
+            "stock_id",
+            "stock_name",
+            "shareholder_meeting_date",
+            "detail_available",
+            "filename",
+            "download_request_url",
+        ),
+        source_urls=(
+            "https://mopsov.twse.com.tw/mops/web/ajax_t144sb10_w",
+            "https://doc.twse.com.tw/server-java/t144sb10",
+        ),
+        notes="The detailed relationship table is published as a PDF; this dataset returns report metadata and download request URLs.",
+    ),
+    "mops.employee-benefit-expense": Dataset(
+        id="mops.employee-benefit-expense",
+        title="員工福利及薪資費用統計",
+        group="mops",
+        description="MOPS employee benefit and salary expense statistics by market, year, and optional industry code.",
+        module="tw_stock_cli.crawlers.mops.employee_benefit_expense",
+        kind="mops-employee-benefit-expense",
+        returns=(
+            "market",
+            "report_year",
+            "industry",
+            "stock_id",
+            "stock_name",
+            "employee_benefit_expense_thousand",
+            "employee_salary_expense_thousand",
+            "employee_count",
+            "avg_employee_salary_expense_thousand",
+            "avg_employee_salary_change_ratio",
+            "eps",
+        ),
+        source_urls=("https://mopsov.twse.com.tw/mops/web/ajax_t100sb14",),
+    ),
+    "mops.employee-welfare-policy": Dataset(
+        id="mops.employee-welfare-policy",
+        title="員工福利政策及權益維護措施",
+        group="mops",
+        description="MOPS single-company employee welfare policy and rights protection disclosure, including welfare policy text, labor-management dispute status, social responsibility text, salary adjustment disclosure, and starting salary disclosure.",
+        module="tw_stock_cli.crawlers.mops.employee_welfare_policy",
+        kind="mops-employee-welfare-policy",
+        returns=(
+            "stock_id",
+            "stock_name",
+            "report_year",
+            "disclosure_year",
+            "section",
+            "item",
+            "value",
+            "note",
+        ),
+        source_urls=("https://mopsov.twse.com.tw/mops/web/ajax_t100sb12",),
+        notes="Long text fields are preserved as source text; salary adjustment and starting salary tables are flattened into item/value rows.",
+    ),
+    "mops.full-time-employee-salary": Dataset(
+        id="mops.full-time-employee-salary",
+        title="非擔任主管職務全時員工薪資統計",
+        group="mops",
+        description="MOPS non-manager full-time employee salary statistics by market, year, and optional industry code.",
+        module="tw_stock_cli.crawlers.mops.full_time_employee_salary",
+        kind="mops-full-time-employee-salary",
+        returns=(
+            "market",
+            "report_year",
+            "industry",
+            "stock_id",
+            "stock_name",
+            "salary_total_thousand",
+            "employee_count_avg",
+            "salary_avg_thousand",
+            "salary_median_thousand",
+            "eps",
+            "peer_salary_avg_thousand",
+        ),
+        source_urls=("https://mopsov.twse.com.tw/mops/web/ajax_t100sb15",),
+    ),
+    "mops.independent-director-profile": Dataset(
+        id="mops.independent-director-profile",
+        title="獨立董事基本資料",
+        group="mops",
+        description="MOPS independent director profile summary by market.",
+        module="tw_stock_cli.crawlers.mops.independent_director_profile",
+        kind="mops-independent-director-profile",
+        returns=(
+            "market",
+            "sequence_no",
+            "stock_id",
+            "stock_name",
+            "role",
+            "person_name",
+            "appointment_date",
+            "current_positions",
+            "experience",
+        ),
+        source_urls=("https://mopsov.twse.com.tw/mops/web/ajax_t93sc01_1",),
+    ),
+    "mops.board-attendance-training": Dataset(
+        id="mops.board-attendance-training",
+        title="董事會出席與進修情形",
+        group="mops",
+        description="MOPS single-company board meeting attendance and director training detail.",
+        module="tw_stock_cli.crawlers.mops.board_attendance_training",
+        kind="mops-board-attendance-training",
+        returns=(
+            "stock_id",
+            "stock_name",
+            "market",
+            "section",
+            "role",
+            "person_name",
+            "attendance_count",
+            "attendance_ratio",
+            "course_name",
+            "training_hours",
+            "annual_training_hours",
+        ),
+        source_urls=("https://mopsov.twse.com.tw/mops/web/ajax_t93sc03_1",),
+        notes="Rows are split by section: board_attendance and director_training.",
+    ),
+    "mops.functional-committee": Dataset(
+        id="mops.functional-committee",
+        title="功能性委員會設置及成員",
+        group="mops",
+        description="MOPS functional committee establishment and member summary by market and committee code.",
+        module="tw_stock_cli.crawlers.mops.functional_committee",
+        kind="mops-functional-committee",
+        returns=(
+            "market",
+            "committee_code",
+            "committee_name",
+            "stock_id",
+            "stock_name",
+            "established_date",
+            "convener",
+            "members",
+            "operation_info",
+        ),
+        source_urls=(
+            "https://mopsov.twse.com.tw/mops/web/ajax_t100sb03_1",
+            "https://mopsov.twse.com.tw/mops/web/ajax_t135sb02",
+        ),
+        notes="Use --committee for committee code; default 4 is remuneration committee, 6 uses the mandatory audit committee endpoint.",
+    ),
+    "mops.company-governance-structure": Dataset(
+        id="mops.company-governance-structure",
+        title="公司治理組織架構",
+        group="mops",
+        description="MOPS company governance organization structure table, including board seats, independent director seats, committee status, legal advisor, and shareholder service contact.",
+        module="tw_stock_cli.crawlers.mops.company_governance_structure",
+        kind="mops-company-governance-structure",
+        returns=(
+            "market",
+            "stock_id",
+            "stock_name",
+            "articles_board_seats",
+            "articles_independent_director_seats",
+            "articles_supervisor_seats",
+            "director_term_start",
+            "director_term_end",
+            "board_seats",
+            "independent_director_seats",
+            "audit_committee_status",
+            "remuneration_committee_status",
+            "legal_advisor",
+            "shareholder_service_contact",
+        ),
+        source_urls=("https://mopsov.twse.com.tw/mops/web/ajax_t100sb01_1",),
+    ),
+    "mops.sustainability-report": Dataset(
+        id="mops.sustainability-report",
+        title="永續報告書 metadata",
+        group="mops",
+        description="MOPS/ESGGen+ sustainability report metadata for a market/year with optional company filter, including website links and report download URLs.",
+        module="tw_stock_cli.crawlers.mops.sustainability_report",
+        kind="mops-sustainability-report",
+        returns=(
+            "market",
+            "report_year",
+            "stock_id",
+            "stock_name",
+            "industry",
+            "reporting_interval",
+            "compliance_notes",
+            "assurance_provider",
+            "assurance_standard",
+            "tw_report_url",
+            "tw_report_download_url",
+            "en_report_url",
+            "en_report_download_url",
+        ),
+        source_urls=(
+            "https://mopsov.twse.com.tw/mops/web/ajax_t100sb11",
+            "https://esggenplus.twse.com.tw/api/api/MopsSustainReport/data",
+        ),
+        notes="Returns ESG report metadata and download links; it does not parse PDF contents.",
+    ),
+    "mops.esg-company-disclosure": Dataset(
+        id="mops.esg-company-disclosure",
+        title="企業 ESG 資訊揭露個別公司查詢 metadata",
+        group="mops",
+        description="MOPS ESG company disclosure inquiry metadata for a single company and year. MOPS redirects this query to ESGGen+.",
+        module="tw_stock_cli.crawlers.mops.esg_company_disclosure",
+        kind="mops-esg-company-disclosure",
+        returns=(
+            "stock_id",
+            "mops_year",
+            "report_year",
+            "inquiry_url",
+        ),
+        source_urls=(
+            "https://mopsov.twse.com.tw/mops/web/ajax_t214sb01",
+            "https://esggenplus.twse.com.tw/inquiry/info/individual",
+        ),
+        notes="Returns the ESGGen+ inquiry URL exposed by MOPS; it does not scrape the front-end rendered indicator table.",
+    ),
+    "mops.manager-compensation-distribution": Dataset(
+        id="mops.manager-compensation-distribution",
+        title="經理人員工酬勞分派情形",
+        group="mops",
+        description="MOPS single-company disclosure for managers receiving distributed employee compensation, including stock and cash compensation.",
+        module="tw_stock_cli.crawlers.mops.manager_compensation_distribution",
+        kind="mops-manager-compensation-distribution",
+        returns=(
+            "stock_id",
+            "stock_name",
+            "compensation_year",
+            "distribution_year",
+            "stock_compensation_shares",
+            "stock_compensation_amount",
+            "cash_compensation_amount",
+            "total_compensation_amount",
+            "profit_ratio",
+        ),
+        source_urls=("https://mopsov.twse.com.tw/mops/web/ajax_t114sb07",),
+        notes="The requested year is the distribution year; MOPS also reports the compensation year in the table heading.",
+    ),
+    "mops.shareholding-distribution": Dataset(
+        id="mops.shareholding-distribution",
+        title="股權分散表",
+        group="mops",
+        description="MOPS single-company shareholding distribution and shareholder structure table by year.",
+        module="tw_stock_cli.crawlers.mops.shareholding_distribution",
+        kind="mops-shareholding-distribution",
+        returns=(
+            "stock_id",
+            "stock_name",
+            "query_year",
+            "data_date",
+            "section",
+            "bucket_or_category",
+            "holders",
+            "shares",
+            "holding_ratio",
+        ),
+        source_urls=("https://mopsov.twse.com.tw/mops/web/ajax_t16sn02",),
+        notes="Includes both holding-level buckets and shareholder-structure categories from the MOPS table.",
+    ),
     "mops.dividend-distribution": Dataset(
         id="mops.dividend-distribution",
         title="公司股利分派情形",
@@ -1024,11 +1559,13 @@ DATASETS: dict[str, Dataset] = {
             "summary",
             "presentation_zh_file",
             "presentation_en_file",
+            "presentation_zh_download_url",
+            "presentation_en_download_url",
             "company_ir_url",
             "media_links",
         ),
         source_urls=("https://mopsov.twse.com.tw/mops/web/ajax_t100sb02_1",),
-        notes="Presentation columns contain MOPS file names when files are disclosed.",
+        notes="Presentation columns contain MOPS file names and FileDownLoad URLs when files are disclosed.",
     ),
     "mops.insider-shareholding-change": Dataset(
         id="mops.insider-shareholding-change",

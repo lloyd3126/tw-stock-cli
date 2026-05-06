@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import re
 from typing import Any
+from urllib.parse import urlencode
 
 import pandas as pd
 import requests
@@ -18,6 +19,7 @@ from tw_stock_cli.crawlers.mops.common import has_no_data
 
 URL = "https://mopsov.twse.com.tw/mops/web/ajax_t100sb02_1"
 REFERER = "https://mopsov.twse.com.tw/mops/web/t100sb02_1"
+DOWNLOAD_BASE_URL = "https://mopsov.twse.com.tw/server-java/FileDownLoad"
 
 NORMALIZED_COLUMN_MAP = {
     "公司代號": "stock_id",
@@ -79,6 +81,14 @@ def normalize_investor_conference_table(
     if "stock_id" in result.columns:
         result["stock_id"] = result["stock_id"].astype(str)
     result.insert(0, "query_year", int(parameter.get("year")))
+    result["presentation_zh_download_url"] = result.get(
+        "presentation_zh_file",
+        pd.Series(dtype=object),
+    ).map(presentation_file_download_url)
+    result["presentation_en_download_url"] = result.get(
+        "presentation_en_file",
+        pd.Series(dtype=object),
+    ).map(presentation_file_download_url)
     return result
 
 
@@ -110,3 +120,17 @@ def month_value(month: Any) -> str:
 
 def clean_header_part(part: str) -> str:
     return re.sub(r"\s+", " ", part.replace("\xa0", " ")).strip()
+
+
+def presentation_file_download_url(filename: Any) -> str | None:
+    text = clean_text(filename)
+    if not text or text in {"-", "--", "無", "nan"}:
+        return None
+    return f"{DOWNLOAD_BASE_URL}?{urlencode({'step': 9, 'filePath': '/home/html/nas/STR/', 'fileName': text, 'functionName': 't100sb02_1'})}"
+
+
+def clean_text(value: Any) -> str | None:
+    if value is None or pd.isna(value):
+        return None
+    text = re.sub(r"\s+", " ", str(value).replace("\xa0", " ")).strip()
+    return text or None
