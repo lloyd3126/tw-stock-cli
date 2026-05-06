@@ -128,11 +128,34 @@ def add_dataset_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("dataset")
     parser.add_argument("--date", help="Trading date in YYYY-MM-DD format.")
     parser.add_argument(
+        "--stock-id",
+        "--company-id",
+        dest="stock_id",
+        help="Company stock ID for single-company MOPS datasets.",
+    )
+    parser.add_argument(
+        "--industry-code",
+        help="MOPS industry code for company basic information datasets.",
+    )
+    parser.add_argument("--seq-no", help="MOPS material information detail sequence.")
+    parser.add_argument(
+        "--spoke-date",
+        help="MOPS material information detail spoke date in YYYYMMDD format.",
+    )
+    parser.add_argument(
+        "--spoke-time",
+        help="MOPS material information detail spoke time in HHMMSS format.",
+    )
+    parser.add_argument(
         "--year",
         type=int,
         help="MOPS year. Accepts ROC year such as 115 or AD year such as 2026.",
     )
     parser.add_argument("--month", type=int, help="MOPS month number.")
+    parser.add_argument("--start-month", type=int, help="MOPS start month number.")
+    parser.add_argument("--end-month", type=int, help="MOPS end month number.")
+    parser.add_argument("--start-day", type=int, help="MOPS start day number.")
+    parser.add_argument("--end-day", type=int, help="MOPS end day number.")
     parser.add_argument(
         "--quarter", type=int, choices=[1, 2, 3, 4], help="MOPS quarter number."
     )
@@ -229,8 +252,17 @@ def command_validate(args: argparse.Namespace) -> None:
 def params_from_args(args: argparse.Namespace) -> dict[str, Any]:
     return {
         "date": args.date,
+        "stock_id": getattr(args, "stock_id", None),
+        "industry_code": getattr(args, "industry_code", None),
+        "seq_no": getattr(args, "seq_no", None),
+        "spoke_date": getattr(args, "spoke_date", None),
+        "spoke_time": getattr(args, "spoke_time", None),
         "year": args.year,
         "month": args.month,
+        "start_month": getattr(args, "start_month", None),
+        "end_month": getattr(args, "end_month", None),
+        "start_day": getattr(args, "start_day", None),
+        "end_day": getattr(args, "end_day", None),
         "quarter": args.quarter,
         "market": args.market,
         "foreign": args.foreign,
@@ -410,14 +442,96 @@ def required_params(dataset: Dataset) -> str:
         return "year, month"
     if dataset.kind == "mops-quarter":
         return "year, quarter"
+    if dataset.kind == "mops-company-quarter":
+        return "stock_id, year, quarter"
+    if dataset.kind == "mops-company-year":
+        return "stock_id, year"
+    if dataset.kind == "mops-treasury-stock-buyback":
+        return "stock_id"
+    if dataset.kind in {
+        "mops-asset-acquisition-disposal",
+        "mops-asset-acquisition-disposal-financial",
+        "mops-endorsement-guarantee",
+        "mops-fund-lending",
+        "mops-related-party-transaction",
+    }:
+        return "stock_id, year, month"
+    if dataset.kind == "mops-material-info":
+        return "year"
+    if dataset.kind == "mops-ex-dividend":
+        return "year"
+    if dataset.kind == "mops-insider-shareholding-change":
+        return "year, month"
+    if dataset.kind == "mops-insider-shareholding-detail":
+        return "stock_id, year, month"
+    if dataset.kind == "mops-insider-holding-company-list":
+        return "year, month"
+    if dataset.kind == "mops-insider-holding-detail":
+        return "stock_id, year, month"
+    if dataset.kind == "mops-insider-transfer-detail":
+        return "stock_id, year"
+    if dataset.kind == "mops-insider-transfer-summary":
+        return "year"
+    if dataset.kind == "mops-insider-pledge-summary":
+        return "year, month"
+    if dataset.kind == "mops-insider-pledge-ratio-summary":
+        return "year, month"
+    if dataset.kind == "mops-investor-conference":
+        return "year"
+    if dataset.kind == "mops-material-info-detail":
+        return "stock_id, seq_no, spoke_date, spoke_time"
+    if dataset.kind == "mops-shareholder-meeting":
+        return "year"
     return ""
 
 
 def optional_params(dataset: Dataset) -> list[str]:
     if dataset.kind == "mops-month":
         return ["market", "foreign"]
-    if dataset.kind == "mops-quarter":
+    if dataset.kind in {"mops-quarter", "mops-company-quarter"}:
         return ["market"]
+    if dataset.kind == "mops-company-year":
+        return ["market"]
+    if dataset.kind == "mops-basic-info":
+        return ["market", "stock_id", "industry_code"]
+    if dataset.kind == "mops-treasury-stock-buyback":
+        return ["market"]
+    if dataset.kind == "mops-private-placement":
+        return ["market", "stock_id"]
+    if dataset.kind in {
+        "mops-asset-acquisition-disposal",
+        "mops-asset-acquisition-disposal-financial",
+        "mops-endorsement-guarantee",
+        "mops-fund-lending",
+        "mops-related-party-transaction",
+    }:
+        return ["market"]
+    if dataset.kind == "mops-material-info":
+        return ["market", "stock_id", "month", "start_day", "end_day"]
+    if dataset.kind == "mops-ex-dividend":
+        return ["market", "stock_id", "month", "start_day", "end_day"]
+    if dataset.kind == "mops-insider-shareholding-change":
+        return ["market"]
+    if dataset.kind == "mops-insider-shareholding-detail":
+        return ["market"]
+    if dataset.kind == "mops-insider-holding-company-list":
+        return ["market", "industry_code"]
+    if dataset.kind == "mops-insider-holding-detail":
+        return ["market"]
+    if dataset.kind == "mops-insider-transfer-detail":
+        return ["market", "month", "start_month", "end_month"]
+    if dataset.kind == "mops-insider-transfer-summary":
+        return ["market", "month", "start_month", "end_month"]
+    if dataset.kind == "mops-insider-pledge-summary":
+        return ["market"]
+    if dataset.kind == "mops-insider-pledge-ratio-summary":
+        return ["market"]
+    if dataset.kind == "mops-investor-conference":
+        return ["market", "stock_id", "month"]
+    if dataset.kind == "mops-material-info-detail":
+        return ["market"]
+    if dataset.kind == "mops-shareholder-meeting":
+        return ["market", "stock_id", "month", "start_day", "end_day"]
     return []
 
 

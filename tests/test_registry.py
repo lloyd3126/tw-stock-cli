@@ -12,7 +12,7 @@ from tw_stock_cli.registry import require
 
 
 def test_dataset_catalog_contains_expected_public_datasets() -> None:
-    assert len(DATASETS) == 27
+    assert len(DATASETS) == 55
     assert set(DATASETS) >= {
         "twse.stock-price",
         "tpex.stock-price",
@@ -20,6 +20,32 @@ def test_dataset_catalog_contains_expected_public_datasets() -> None:
         "taifex.fcm-futures-volume-day",
         "mops.month-revenue",
         "mops.income-statement",
+        "mops.company-cash-flow",
+        "mops.company-equity-changes",
+        "mops.company-basic-info",
+        "mops.asset-acquisition-disposal",
+        "mops.asset-acquisition-disposal-financial",
+        "mops.dividend-distribution",
+        "mops.ex-dividend-announcement",
+        "mops.endorsement-guarantee",
+        "mops.fund-lending",
+        "mops.insider-holding-company-list",
+        "mops.insider-holding-detail",
+        "mops.insider-pledge-ratio-summary",
+        "mops.insider-pledge-summary",
+        "mops.insider-shareholding-change",
+        "mops.insider-shareholding-detail",
+        "mops.insider-transfer-declaration-detail",
+        "mops.insider-transfer-declaration-summary",
+        "mops.insider-transfer-untransferred-detail",
+        "mops.insider-transfer-untransferred-summary",
+        "mops.investor-conference",
+        "mops.material-info",
+        "mops.material-info-detail",
+        "mops.private-placement",
+        "mops.related-party-transaction",
+        "mops.shareholder-meeting",
+        "mops.treasury-stock-buyback",
     }
 
 

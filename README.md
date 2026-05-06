@@ -7,7 +7,7 @@
 - TWSE 上市股票每日價格、股票清單、本益比/殖利率/PBR、三大法人買賣超、融資融券、外資持股與報酬指數資料。
 - TPEx 上櫃股票每日價格、股票清單、本益比/殖利率/PBR、三大法人買賣超、融資融券、外資持股與指數資料。
 - TAIFEX 期貨與選擇權日行情、逐筆成交、三大法人部位與期貨商成交量。
-- MOPS 月營收、綜合損益表、資產負債表與現金流量表。
+- MOPS 月營收、彙總三表、單一公司詳細四表、公司基本資料、股利分派、除權息公告、庫藏股、私募、取得或處分資產、資金貸與、背書保證、關係人交易、法說會、股東會、重大訊息、內部人股權異動、持股餘額、轉讓申報與質權設定資料。
 
 ## 需求
 
@@ -24,6 +24,29 @@ uv run tw-stock list-datasets
 uv run tw-stock describe twse.stock-price
 uv run tw-stock fetch twse.stock-price --date 2026-04-30 --format jsonl
 uv run tw-stock validate twse.stock-price --date 2026-04-30 --json
+uv run tw-stock fetch mops.company-cash-flow --stock-id 2395 --year 2025 --quarter 4 --format jsonl
+uv run tw-stock fetch mops.company-basic-info --stock-id 2395 --market sii --format json
+uv run tw-stock fetch mops.treasury-stock-buyback --stock-id 1101 --market sii --limit 2 --format json
+uv run tw-stock fetch mops.private-placement --stock-id 1316 --market sii --limit 5 --format json
+uv run tw-stock fetch mops.asset-acquisition-disposal --stock-id 8011 --year 2024 --month 9 --market sii --format json
+uv run tw-stock fetch mops.asset-acquisition-disposal-financial --stock-id 8011 --year 2024 --month 9 --market sii --format json
+uv run tw-stock fetch mops.fund-lending --stock-id 1101 --year 2025 --month 3 --market sii --limit 5 --format json
+uv run tw-stock fetch mops.endorsement-guarantee --stock-id 1101 --year 2025 --month 3 --market sii --limit 5 --format json
+uv run tw-stock fetch mops.related-party-transaction --stock-id 8011 --year 2024 --month 9 --market sii --limit 5 --format json
+uv run tw-stock fetch mops.dividend-distribution --stock-id 2395 --year 2025 --format json
+uv run tw-stock fetch mops.ex-dividend-announcement --stock-id 2395 --year 2025 --market sii --format json
+uv run tw-stock fetch mops.investor-conference --stock-id 2395 --year 2025 --market sii --format jsonl
+uv run tw-stock fetch mops.shareholder-meeting --stock-id 2395 --year 2025 --market sii --format json
+uv run tw-stock fetch mops.insider-shareholding-change --year 2025 --month 3 --market sii --limit 5 --format json
+uv run tw-stock fetch mops.insider-shareholding-detail --stock-id 2395 --year 2025 --month 3 --market sii --format jsonl
+uv run tw-stock fetch mops.insider-holding-company-list --year 2025 --month 3 --market sii --limit 5 --format json
+uv run tw-stock fetch mops.insider-holding-detail --stock-id 2395 --year 2025 --month 3 --market sii --format jsonl
+uv run tw-stock fetch mops.insider-transfer-declaration-summary --year 2025 --month 3 --market sii --limit 5 --format json
+uv run tw-stock fetch mops.insider-transfer-untransferred-summary --year 2025 --month 3 --market sii --format json
+uv run tw-stock fetch mops.insider-pledge-summary --year 2025 --month 3 --market sii --limit 5 --format json
+uv run tw-stock fetch mops.insider-pledge-ratio-summary --year 2025 --month 3 --market sii --limit 5 --format json
+uv run tw-stock fetch mops.material-info --stock-id 2395 --year 2025 --format jsonl
+uv run tw-stock fetch mops.material-info-detail --stock-id 2395 --market sii --seq-no 4 --spoke-date 20250227 --spoke-time 143238 --format json
 ```
 
 使用 `--format` 選擇輸出格式，可用格式包含 `table`、`json`、`jsonl`、`csv` 或 `parquet`。
@@ -67,6 +90,8 @@ tw_stock_cli/
 ## 欄位命名
 
 Crawler 輸出會將共通欄位正規化為英文 `snake_case`，例如 `stock_id`、`stock_name`、`date`、`open`、`high`、`low`、`close` 與 `volume`。MOPS 財報中的來源特定會計科目會保留中文，但共用識別欄位仍會正規化為 `stock_id` 與 `stock_name`。
+
+MOPS 單一公司詳細財報會以 `item` 保留來源會計項目，並依來源表頭產生動態期間欄位，例如 `114年度_amount` 或 `114年12月31日_percent`。這類資料可用來取得彙總表沒有的現金流量表細項，例如取得不動產、廠房及設備或取得無形資產。權益變動表因來源同時提供比較年度，JSON 輸出會回傳多張表。
 
 ## 測試
 
